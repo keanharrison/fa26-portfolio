@@ -204,6 +204,14 @@ html.dark .icon-moon { display: none; }
   transition: opacity 0.15s ease;
 }
 .hero-socials a:hover { opacity: 0.65; }
+.hero-socials a.social-icon {
+  display: inline-flex;
+  align-items: center;
+}
+.hero-socials a.social-icon svg {
+  width: 18px;
+  height: 18px;
+}
 
 /* ── BOTTOM STATUS BAR ───────────────────────────────── */
 
