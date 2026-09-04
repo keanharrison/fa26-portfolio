@@ -89,10 +89,14 @@ body {
   border: 1.5px solid var(--fg);
   cursor: pointer;
   padding: 0;
+  overflow: hidden;
+  /* Always-visible split: fg left half, bg right half */
   background: linear-gradient(90deg, var(--fg) 50%, var(--bg) 50%);
-  transition: opacity 0.15s ease, border-color 0.25s ease, background 0.25s ease;
+  /* Ensure border is always visible */
+  box-shadow: 0 0 0 1.5px var(--fg);
+  transition: opacity 0.15s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
-.theme-toggle:hover { opacity: 0.6; }
+.theme-toggle:hover { opacity: 0.55; }
 
 /* Nav links — centered */
 .topnav {
@@ -123,13 +127,13 @@ body {
 
 .nw {
   color: var(--nav-idle);
-  font-weight: 500;
+  font-weight: 300;
   letter-spacing: 0.02em;
 }
 
 .nh {
   color: var(--fg);
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.02em;
   background: linear-gradient(90deg, var(--fg) 10%, var(--muted) 50%, var(--fg) 90%);
   background-size: 200% 100%;
@@ -189,8 +193,8 @@ body {
   gap: 22px;
 }
 .hero-socials a {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 300;
   color: var(--link-blue);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -210,9 +214,9 @@ body {
   flex-shrink: 0;
 }
 .status-bar span {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
   color: var(--muted);
   line-height: 1.4;
 }
@@ -231,10 +235,21 @@ body {
 
 /* ── RESUME EMBED ────────────────────────────────────── */
 
+.resume-wrap {
+  padding-top: calc(var(--nav-h) + 24px);
+  padding-left: var(--margin);
+  padding-right: var(--margin);
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 24px;
+}
+
 .resume-embed {
+  flex: 1;
   width: 100%;
-  height: calc(100vh - var(--nav-h) - 80px - 80px);
-  min-height: 600px;
+  min-height: 0;
   border: none;
   display: block;
 }
@@ -254,14 +269,14 @@ body {
   cursor: pointer;
   font-family: var(--font);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 300;
   letter-spacing: 0.03em;
   color: var(--nav-idle);
   padding: 0;
   transition: color 0.15s ease;
 }
 .tab-btn:hover { color: var(--fg); }
-.tab-btn.active { color: var(--fg); font-weight: 700; }
+.tab-btn.active { color: var(--fg); font-weight: 400; }
 
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
