@@ -3,95 +3,154 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>work — Kean Harrison</title>
+  <title>work — kean harrison</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="inner-body">
 
-  <header class="site-header header-inner">
+  <header class="site-header">
     <a href="index.html" class="nav-logo">
-      <img src="assets/headshot.jpg" alt="Kean Harrison" />
+      <img src="assets/headshot.jpg" alt="kean harrison" />
     </a>
     <nav class="topnav">
-      <a href="index.html">home</a>
-      <a href="about.html">about</a>
-      <a href="work.html" class="active">work</a>
-      <a href="personal.html">personal</a>
-      <a href="contact.html">contact</a>
+      <a href="index.html"><span class="nw">home</span><span class="nh">home</span></a>
+      <a href="work.html" class="active"><span class="nw">work</span><span class="nh">work</span></a>
+      <a href="personal.html"><span class="nw">personal</span><span class="nh">personal</span></a>
+      <a href="contact.html"><span class="nw">contact</span><span class="nh">contact</span></a>
     </nav>
   </header>
 
   <div class="inner">
-    <p class="page-heading">work</p>
 
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('experience', this)">experience</button>
       <button class="tab-btn" onclick="switchTab('projects', this)">projects</button>
     </div>
 
-    <!-- EXPERIENCE TAB -->
+    <!-- EXPERIENCE -->
     <div class="tab-panel active" id="tab-experience">
 
-      <div class="entry">
-        <div>
-          <div class="entry-org">Booz Allen Hamilton</div>
-          <div class="entry-role">Product Engineer Intern</div>
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">booz allen hamilton</div>
+            <div class="entry-role">product engineer intern</div>
+          </div>
+          <div class="entry-date">jun – aug 2026<br/>san diego, ca</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>developed prototypes, product roadmaps, and wireframes while conducting discovery interviews with navy stakeholders. synthesized findings into product insights and requirements.</p>
         </div>
-        <div class="entry-date">Jun – Aug 2026<br/>San Diego, CA</div>
-      </div>
+      </details>
 
-      <div class="entry">
-        <div>
-          <div class="entry-org">UVA Darden School of Business</div>
-          <div class="entry-role">Co-Founder &amp; CTO, Speak — Co-Founder, Vantage</div>
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">ilab incubator, uva darden</div>
+            <div class="entry-role">co-founder</div>
+          </div>
+          <div class="entry-date">nov 2025 – jun 2026<br/>remote</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>built a venture inside uva darden's ultra-competitive startup accelerator program.</p>
+          <div class="sub-entry">
+            <div class="sub-entry-name">speak</div>
+            <div class="sub-entry-role">co-founder & cto</div>
+            <p style="margin-top:8px;">built the mobile-first app with next.js 14, react, and typescript. deployed the mvp to vercel for demo night, where the venture drew interest from investors who currently serve as primary stakeholders.</p>
+          </div>
         </div>
-        <div class="entry-date">Nov 2025 – Jun 2026<br/>Remote</div>
-      </div>
+      </details>
 
-      <div class="entry">
-        <div>
-          <div class="entry-org">Stealth Startup</div>
-          <div class="entry-role">Technical Product Manager Intern</div>
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">vantage</div>
+            <div class="entry-role">co-founder</div>
+          </div>
+          <div class="entry-date">2025 – 2026<br/>remote</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>co-founded the venture.</p>
         </div>
-        <div class="entry-date">Jul – Sep 2025<br/>Remote</div>
-      </div>
+      </details>
 
-      <div class="entry">
-        <div>
-          <div class="entry-org">Johnson Controls International</div>
-          <div class="entry-role">Sales Engineer Intern</div>
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">stealth startup</div>
+            <div class="entry-role">technical product manager intern</div>
+          </div>
+          <div class="entry-date">jul – sep 2025<br/>remote</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>add description here.</p>
         </div>
-        <div class="entry-date">May – Aug 2025<br/>Remote</div>
-      </div>
+      </details>
 
-      <div class="entry">
-        <div>
-          <div class="entry-org">Beats by Dre</div>
-          <div class="entry-role">Product Analyst</div>
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">johnson controls international</div>
+            <div class="entry-role">sales engineer intern</div>
+          </div>
+          <div class="entry-date">may – aug 2025<br/>remote</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>add description here.</p>
         </div>
-        <div class="entry-date">Mar – May 2025<br/>Remote</div>
-      </div>
+      </details>
 
-      <div class="entry">
-        <div>
-          <div class="entry-org">KeanFit LLC</div>
-          <div class="entry-role">Founder</div>
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">beats by dre</div>
+            <div class="entry-role">product analyst</div>
+          </div>
+          <div class="entry-date">mar – may 2025<br/>remote</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>add description here.</p>
         </div>
-        <div class="entry-date">Aug 2023 – Mar 2025<br/>Alexandria, VA</div>
-      </div>
+      </details>
+
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">keanfit llc</div>
+            <div class="entry-role">founder</div>
+          </div>
+          <div class="entry-date">aug 2023 – mar 2025<br/>alexandria, va</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>add description here.</p>
+        </div>
+      </details>
 
     </div>
 
-    <!-- PROJECTS TAB -->
+    <!-- PROJECTS -->
     <div class="tab-panel" id="tab-projects">
 
-      <div class="entry">
-        <div>
-          <div class="entry-org">Anthropic</div>
-          <div class="entry-role">Product Ambassador</div>
+      <details class="entry">
+        <summary>
+          <div>
+            <div class="entry-org">anthropic</div>
+            <div class="entry-role">product ambassador</div>
+          </div>
+          <div class="entry-date">aug – dec 2025<br/>charlottesville, va</div>
+          <span class="entry-toggle">+</span>
+        </summary>
+        <div class="entry-body">
+          <p>add description here.</p>
         </div>
-        <div class="entry-date">Aug – Dec 2025<br/>Charlottesville, VA</div>
-      </div>
+      </details>
 
     </div>
   </div>
