@@ -3,39 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>personal — kean harrison</title>
+  <title>Personal — Kean Harrison</title>
+  <script src="theme.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="inner-body">
 
   <header class="site-header">
     <a href="index.html" class="nav-logo">
-      <img src="assets/headshot.jpg" alt="kean harrison" />
+      <img src="assets/headshot.jpg" alt="Kean Harrison" />
     </a>
     <nav class="topnav">
-      <a href="index.html"><span class="nw">home</span><span class="nh">home</span></a>
-      <a href="work.html"><span class="nw">work</span><span class="nh">work</span></a>
-      <a href="personal.html" class="active"><span class="nw">personal</span><span class="nh">personal</span></a>
-      <a href="contact.html"><span class="nw">contact</span><span class="nh">contact</span></a>
+      <a href="index.html"><span class="nw">Home</span><span class="nh">Home</span></a>
+      <a href="work.html"><span class="nw">Work</span><span class="nh">Work</span></a>
+      <a href="personal.html" class="active"><span class="nw">Personal</span><span class="nh">Personal</span></a>
+      <a href="contact.html"><span class="nw">Contact</span><span class="nh">Contact</span></a>
     </nav>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 18V4a8 8 0 0 1 0 16z"/>
+      </svg>
+    </button>
   </header>
 
   <div class="inner">
     <div class="photo-grid">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div>
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div>
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div>
+      <div class="tile"></div><div class="tile"></div><div class="tile"></div>
     </div>
   </div>
+
+  <script>
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+  </script>
 
 </body>
 </html>
