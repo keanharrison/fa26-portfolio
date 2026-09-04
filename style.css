@@ -97,10 +97,11 @@ body {
   transition: opacity 0.15s ease, color 0.25s ease;
 }
 .theme-toggle:hover { opacity: 0.5; }
-.theme-toggle svg {
-  width: 26px;
-  height: 26px;
-}
+.theme-toggle svg { width: 22px; height: 22px; }
+
+/* Show moon in light mode, sun in dark mode */
+html:not(.dark) .icon-sun { display: none; }
+html.dark .icon-moon { display: none; }
 
 /* Nav links — centered */
 .topnav {
@@ -181,8 +182,8 @@ body {
 .hero-name {
   font-family: var(--font);
   font-size: clamp(64px, 10vw, 160px);
-  font-weight: 200;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: -0.05em;
   line-height: 1;
   color: var(--fg);
   user-select: none;
@@ -195,11 +196,11 @@ body {
   gap: 22px;
 }
 .hero-socials a {
-  font-size: 12px;
-  font-weight: 200;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--link-blue);
   text-decoration: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   transition: opacity 0.15s ease;
 }
 .hero-socials a:hover { opacity: 0.65; }
@@ -233,26 +234,68 @@ body {
   padding-bottom: 140px;
 }
 
-/* ── RESUME EMBED ────────────────────────────────────── */
+/* ── RESUME PAGE ─────────────────────────────────────── */
 
-.resume-wrap {
-  padding-top: calc(var(--nav-h) + 24px);
-  padding-left: var(--margin);
-  padding-right: var(--margin);
-  height: 100vh;
-  box-sizing: border-box;
+.resume-page-body {
   display: flex;
   flex-direction: column;
-  padding-bottom: 24px;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
 }
 
-.resume-embed {
+.resume-link-area {
+  padding-top: calc(var(--nav-h) + 48px);
+  padding-left: var(--margin);
+  padding-right: var(--margin);
+  padding-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.resume-link {
+  font-family: var(--font);
+  font-size: clamp(48px, 7vw, 110px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--fg);
+  text-decoration: none;
+  line-height: 1;
+  display: inline-block;
+  transition: opacity 0.15s ease;
+}
+.resume-link:hover { opacity: 0.4; }
+
+/* Floating icon stage */
+.float-stage {
   flex: 1;
-  width: 100%;
-  min-height: 0;
-  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.float-icon {
+  position: absolute;
+  width: 66px;
+  height: 66px;
+  border-radius: 16px;
+  background: var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: left, top;
+  transition: box-shadow 0.15s ease;
+}
+.float-icon:active { cursor: grabbing; box-shadow: 0 10px 28px rgba(0,0,0,0.18); }
+.float-icon img {
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+  -webkit-user-drag: none;
   display: block;
 }
+html.dark .float-icon img { filter: invert(1) brightness(1.8); }
 
 /* ── WORK / TAB TOGGLE ───────────────────────────────── */
 

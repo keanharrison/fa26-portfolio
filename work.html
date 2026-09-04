@@ -7,7 +7,7 @@
   <script src="theme.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="inner-body">
+<body class="resume-page-body">
 
   <header class="site-header">
     <a href="index.html" class="nav-logo">
@@ -19,22 +19,38 @@
       <a href="personal.html"><span class="nw">Personal</span><span class="nh">Personal</span></a>
     </nav>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M12 2 A10 10 0 0 1 12 22 Z" fill="currentColor"/>
-        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M12 8 A4 4 0 0 0 12 16 Z" fill="currentColor"/>
+      <!-- Moon: visible in light mode -->
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <!-- Sun: visible in dark mode -->
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <line x1="12" y1="2" x2="12" y2="5"/>
+        <line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+        <line x1="2" y1="12" x2="5" y2="12"/>
+        <line x1="19" y1="12" x2="22" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
       </svg>
     </button>
   </header>
 
-  <div class="resume-wrap">
-    <iframe
-      src="assets/kean_resume.pdf"
-      class="resume-embed"
-      title="Kean Harrison Resume">
-      <p>Unable to display PDF inline. <a href="assets/kean_resume.pdf" target="_blank">Open resume ↗</a></p>
-    </iframe>
+  <div class="resume-link-area">
+    <a class="resume-link" href="https://drive.google.com/file/d/1_XGEhKgvJ1ImMsqZJmmTEqSD7UuzJl9o/view?usp=sharing" target="_blank" rel="noopener">Resume ↗</a>
+  </div>
+
+  <div class="float-stage" id="floatStage">
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/react" alt="React" /></div>
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/nextdotjs" alt="Next.js" /></div>
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/typescript" alt="TypeScript" /></div>
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/python" alt="Python" /></div>
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/javascript" alt="JavaScript" /></div>
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/figma" alt="Figma" /></div>
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/github" alt="GitHub" /></div>
+    <div class="float-icon"><img src="https://cdn.simpleicons.org/nodedotjs" alt="Node.js" /></div>
   </div>
 
   <script>
@@ -42,6 +58,110 @@
       document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
     }
+
+    // ── Physics drag ──────────────────────────────────────
+    const stage = document.getElementById('floatStage');
+    const icons = Array.from(stage.querySelectorAll('.float-icon'));
+    const SIZE = 66;
+
+    // Scatter initial positions
+    function scatter() {
+      const W = stage.clientWidth  - SIZE;
+      const H = stage.clientHeight - SIZE;
+      icons.forEach(el => {
+        el.style.left = Math.max(0, Math.random() * W) + 'px';
+        el.style.top  = Math.max(0, Math.random() * H) + 'px';
+      });
+    }
+    scatter();
+    window.addEventListener('resize', scatter);
+
+    icons.forEach(el => {
+      let x, y, vx = 0, vy = 0;
+      let dragging = false;
+      let startMX, startMY, lastMX, lastMY;
+      let raf = null;
+
+      function getPos() {
+        x = parseFloat(el.style.left) || 0;
+        y = parseFloat(el.style.top)  || 0;
+      }
+
+      function render() {
+        el.style.left = x + 'px';
+        el.style.top  = y + 'px';
+      }
+
+      function clamp() {
+        const W = stage.clientWidth  - SIZE;
+        const H = stage.clientHeight - SIZE;
+        if (x < 0)  { x = 0;  vx *= -0.6; }
+        if (x > W)  { x = W;  vx *= -0.6; }
+        if (y < 0)  { y = 0;  vy *= -0.6; }
+        if (y > H)  { y = H;  vy *= -0.6; }
+      }
+
+      function slide() {
+        vx *= 0.90;
+        vy *= 0.90;
+        x += vx;
+        y += vy;
+        clamp();
+        render();
+        if (Math.abs(vx) > 0.15 || Math.abs(vy) > 0.15) {
+          raf = requestAnimationFrame(slide);
+        } else {
+          vx = 0; vy = 0;
+          el.style.zIndex = '';
+        }
+      }
+
+      function onDown(e) {
+        e.preventDefault();
+        cancelAnimationFrame(raf);
+        dragging = true;
+        getPos();
+        const pt = e.touches ? e.touches[0] : e;
+        startMX = pt.clientX - x;
+        startMY = pt.clientY - y;
+        lastMX  = pt.clientX;
+        lastMY  = pt.clientY;
+        vx = 0; vy = 0;
+        el.style.zIndex = 50;
+        el.style.cursor = 'grabbing';
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('mouseup', onUp);
+        document.addEventListener('touchend', onUp);
+      }
+
+      function onMove(e) {
+        if (!dragging) return;
+        e.preventDefault();
+        const pt = e.touches ? e.touches[0] : e;
+        vx = pt.clientX - lastMX;
+        vy = pt.clientY - lastMY;
+        lastMX = pt.clientX;
+        lastMY = pt.clientY;
+        x = pt.clientX - startMX;
+        y = pt.clientY - startMY;
+        clamp();
+        render();
+      }
+
+      function onUp() {
+        dragging = false;
+        el.style.cursor = 'grab';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('touchend', onUp);
+        slide();
+      }
+
+      el.addEventListener('mousedown', onDown);
+      el.addEventListener('touchstart', onDown, { passive: false });
+    });
   </script>
 
 </body>
