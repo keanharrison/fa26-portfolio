@@ -19,158 +19,22 @@
       <a href="personal.html"><span class="nw">Personal</span><span class="nh">Personal</span></a>
       <a href="contact.html"><span class="nw">Contact</span><span class="nh">Contact</span></a>
     </nav>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 18V4a8 8 0 0 1 0 16z"/>
-      </svg>
-    </button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode"></button>
   </header>
 
   <div class="inner">
-
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('experience', this)">Experience</button>
-      <button class="tab-btn" onclick="switchTab('projects', this)">Projects</button>
-    </div>
-
-    <!-- EXPERIENCE -->
-    <div class="tab-panel active" id="tab-experience">
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">Booz Allen Hamilton</div>
-            <div class="entry-role">Product Engineer Intern</div>
-          </div>
-          <div class="entry-date">Jun – Aug 2026<br/>San Diego, CA</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Prototyped digital solutions and built product roadmaps for U.S. Navy clients. Conducted discovery interviews with stakeholders and synthesized findings into actionable requirements and design decisions.</p>
-        </div>
-      </details>
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">iLab Incubator, UVA Darden</div>
-            <div class="entry-role">Co-Founder</div>
-          </div>
-          <div class="entry-date">Nov 2025 – Jun 2026<br/>Remote</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Built two ventures inside UVA Darden's ultra-competitive startup accelerator program.</p>
-          <div class="sub-entry">
-            <div class="sub-entry-name">Speak</div>
-            <div class="sub-entry-role">Co-Founder & CTO</div>
-            <p>Architected and shipped a mobile-first app using Next.js 14, React, and TypeScript. Deployed to Vercel and pitched at Demo Night, drawing investor interest from stakeholders who remain involved today.</p>
-          </div>
-        </div>
-      </details>
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">Vantage</div>
-            <div class="entry-role">Co-Founder</div>
-          </div>
-          <div class="entry-date">2025 – 2026<br/>Remote</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Co-founded the venture and owned early product strategy, go-to-market planning, and founding team operations.</p>
-        </div>
-      </details>
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">Stealth Startup</div>
-            <div class="entry-role">Technical Product Manager Intern</div>
-          </div>
-          <div class="entry-date">Jul – Sep 2025<br/>Remote</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Owned end-to-end product planning for an early-stage startup. Defined scope, prioritized roadmap, and coordinated execution across engineering and design.</p>
-        </div>
-      </details>
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">Johnson Controls International</div>
-            <div class="entry-role">Sales Engineer Intern</div>
-          </div>
-          <div class="entry-date">May – Aug 2025<br/>Remote</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Supported enterprise sales cycles for industrial building automation solutions. Managed client relationships, developed technical proposals, and delivered product demonstrations to prospective accounts.</p>
-        </div>
-      </details>
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">Beats by Dre</div>
-            <div class="entry-role">Product Analyst</div>
-          </div>
-          <div class="entry-date">Mar – May 2025<br/>Remote</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Analyzed product performance, competitive positioning, and consumer sentiment for flagship audio hardware lines. Delivered insights that informed go-to-market and product development decisions.</p>
-        </div>
-      </details>
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">KeanFit LLC</div>
-            <div class="entry-role">Founder</div>
-          </div>
-          <div class="entry-date">Aug 2023 – Mar 2025<br/>Alexandria, VA</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Founded and operated a personal training business. Built client acquisition and retention systems from scratch, managed day-to-day operations, and scaled a base of recurring clients.</p>
-        </div>
-      </details>
-
-    </div>
-
-    <!-- PROJECTS -->
-    <div class="tab-panel" id="tab-projects">
-
-      <details class="entry">
-        <summary>
-          <div>
-            <div class="entry-org">Anthropic</div>
-            <div class="entry-role">Product Ambassador</div>
-          </div>
-          <div class="entry-date">Aug – Dec 2025<br/>Charlottesville, VA</div>
-          <span class="entry-toggle">+</span>
-        </summary>
-        <div class="entry-body">
-          <p>Represented Anthropic on campus as a product advocate for Claude. Hosted workshops, drove adoption among students and faculty, and surfaced user feedback to the Anthropic team.</p>
-        </div>
-      </details>
-
-    </div>
+    <iframe
+      src="assets/kean_resume.pdf"
+      class="resume-embed"
+      title="Kean Harrison Resume">
+      <p>Your browser can't display the PDF. <a href="assets/kean_resume.pdf" target="_blank">Open resume</a></p>
+    </iframe>
   </div>
 
   <script>
     function toggleTheme() {
       document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-    }
-    function switchTab(id, btn) {
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + id).classList.add('active');
-      btn.classList.add('active');
     }
   </script>
 

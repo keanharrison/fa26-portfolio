@@ -4,7 +4,9 @@
 
 :root {
   --margin:     32px;
-  --nav-h:      65px;
+  --nav-h:      80px;
+  --logo-size:  52px;
+  --logo-top:   14px;
   --font:       "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* light mode */
@@ -13,7 +15,7 @@
   --muted:      #A0A0A0;
   --nav-idle:   #A0A0A0;
   --rule:       #e4e4e4;
-  --link-blue:  #1a6dff;
+  --link-blue:  #5b9cf6;
 }
 
 html.dark {
@@ -22,7 +24,7 @@ html.dark {
   --muted:      #666666;
   --nav-idle:   #666666;
   --rule:       #2a2a2a;
-  --link-blue:  #4d91ff;
+  --link-blue:  #70b0ff;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -56,12 +58,12 @@ body {
 /* Circular headshot — fixed top-left with equal spacing */
 .nav-logo {
   position: fixed;
-  top: var(--margin);
+  top: var(--logo-top);
   left: var(--margin);
   z-index: 201;
   display: block;
-  width: 48px;
-  height: 48px;
+  width: var(--logo-size);
+  height: var(--logo-size);
   border-radius: 50%;
   overflow: hidden;
   text-decoration: none;
@@ -75,30 +77,22 @@ body {
   display: block;
 }
 
-/* Dark/light toggle — fixed top-right */
+/* Dark/light toggle — same size/position as logo, top-right */
 .theme-toggle {
   position: fixed;
-  top: var(--margin);
+  top: var(--logo-top);
   right: var(--margin);
   z-index: 201;
-  background: none;
-  border: none;
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: 50%;
+  border: 1.5px solid var(--fg);
   cursor: pointer;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 0;
-  color: var(--nav-idle);
-  transition: color 0.15s ease;
+  background: linear-gradient(90deg, var(--fg) 50%, var(--bg) 50%);
+  transition: opacity 0.15s ease, border-color 0.25s ease, background 0.25s ease;
 }
-.theme-toggle:hover { color: var(--fg); }
-.theme-toggle svg {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
-}
+.theme-toggle:hover { opacity: 0.6; }
 
 /* Nav links — centered */
 .topnav {
@@ -233,6 +227,16 @@ body {
   padding-left: var(--margin);
   padding-right: var(--margin);
   padding-bottom: 140px;
+}
+
+/* ── RESUME EMBED ────────────────────────────────────── */
+
+.resume-embed {
+  width: 100%;
+  height: calc(100vh - var(--nav-h) - 80px - 80px);
+  min-height: 600px;
+  border: none;
+  display: block;
 }
 
 /* ── WORK / TAB TOGGLE ───────────────────────────────── */
