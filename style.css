@@ -29,9 +29,21 @@ body {
   padding: 96px 24px 120px;
 }
 
-/* Header: name + nav */
+/* Header: avatar + name + nav */
+.avatar-link {
+  display: inline-block;
+}
+.avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  display: block;
+}
+
 .site-name {
-  margin: 0;
+  margin: 20px 0 0;
   font-size: 2.75rem;
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -78,7 +90,7 @@ hr {
   margin: 0;
 }
 .links li { margin-bottom: 22px; }
-.links .label { color: var(--text); }
+.links a { font-weight: 500; }
 
 .muted { color: var(--muted); }
 

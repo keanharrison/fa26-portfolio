@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personal — Kean Harrison</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* --- Style preview only: placeholder tiles stand in for real photos --- */
+    .preview-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: -8px 0 36px;
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .photo-grid .tile {
+      aspect-ratio: 1 / 1;
+      border-radius: 3px;
+      background: linear-gradient(155deg, var(--t1) 0%, var(--t2) 55%, #050505 100%);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: tileIn 0.6s ease forwards;
+      transition: transform 0.35s ease, filter 0.35s ease;
+      cursor: pointer;
+    }
+    .photo-grid .tile:hover {
+      transform: scale(1.03);
+      filter: brightness(1.25);
+    }
+    .tile:nth-child(1)  { --t1:#3a3a3a; --t2:#141414; animation-delay: 0.02s; }
+    .tile:nth-child(2)  { --t1:#2c2c2c; --t2:#0c0c0c; animation-delay: 0.08s; }
+    .tile:nth-child(3)  { --t1:#454545; --t2:#1a1a1a; animation-delay: 0.14s; }
+    .tile:nth-child(4)  { --t1:#242424; --t2:#080808; animation-delay: 0.20s; }
+    .tile:nth-child(5)  { --t1:#3d3d3d; --t2:#101010; animation-delay: 0.26s; }
+    .tile:nth-child(6)  { --t1:#303030; --t2:#0a0a0a; animation-delay: 0.32s; }
+    .tile:nth-child(7)  { --t1:#4a4a4a; --t2:#161616; animation-delay: 0.38s; }
+    .tile:nth-child(8)  { --t1:#282828; --t2:#0e0e0e; animation-delay: 0.44s; }
+    .tile:nth-child(9)  { --t1:#383838; --t2:#121212; animation-delay: 0.50s; }
+    .tile:nth-child(10) { --t1:#333333; --t2:#0d0d0d; animation-delay: 0.56s; }
+    .tile:nth-child(11) { --t1:#404040; --t2:#151515; animation-delay: 0.62s; }
+    .tile:nth-child(12) { --t1:#2a2a2a; --t2:#0b0b0b; animation-delay: 0.68s; }
+    @keyframes tileIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 480px) {
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a href="index.html" class="avatar-link">
+        <img class="avatar" src="assets/headshot.jpg" alt="Kean Harrison" />
+      </a>
+      <h1 class="site-name"><a href="index.html">Kean Harrison</a></h1>
+      <nav>
+        <a href="index.html">About</a>
+        <a href="work.html">Work</a>
+        <a href="personal.html" aria-current="page">Personal</a>
+      </nav>
+    </header>
+
+    <main>
+      <p class="preview-note">Style preview — grid + hover behavior only. Real photos and interests go in next; swap each tile's background for an &lt;img&gt;.</p>
+
+      <div class="photo-grid">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
