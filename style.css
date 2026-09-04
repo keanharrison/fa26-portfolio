@@ -86,17 +86,21 @@ body {
   width: var(--logo-size);
   height: var(--logo-size);
   border-radius: 50%;
-  border: 1.5px solid var(--fg);
+  border: none;
+  background: transparent;
   cursor: pointer;
   padding: 0;
-  overflow: hidden;
-  /* Always-visible split: fg left half, bg right half */
-  background: linear-gradient(90deg, var(--fg) 50%, var(--bg) 50%);
-  /* Ensure border is always visible */
-  box-shadow: 0 0 0 1.5px var(--fg);
-  transition: opacity 0.15s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  transition: opacity 0.15s ease, color 0.25s ease;
 }
-.theme-toggle:hover { opacity: 0.55; }
+.theme-toggle:hover { opacity: 0.5; }
+.theme-toggle svg {
+  width: 26px;
+  height: 26px;
+}
 
 /* Nav links — centered */
 .topnav {
@@ -143,14 +147,12 @@ body {
   background-clip: text;
 }
 
-.topnav a:hover .nw,
-.topnav a.active .nw  { transform: translateY(-100%); }
+/* Active: just show .nw in black — no slide, no shimmer */
+.topnav a.active .nw { color: var(--fg); font-weight: 500; }
 
-.topnav a:hover .nh,
-.topnav a.active .nh  { transform: translateY(-100%); }
-
-.topnav a:hover .nh   { animation: shimmer 0.55s ease forwards; }
-.topnav a.active .nh  { background-position: -100% 0; }
+/* Hover only: slide animation + shimmer on .nh */
+.topnav a:hover .nw { transform: translateY(-100%); }
+.topnav a:hover .nh { transform: translateY(-100%); animation: shimmer 0.55s ease forwards; }
 
 @keyframes shimmer {
   0%   { background-position: 100% 0; }
@@ -179,8 +181,8 @@ body {
 .hero-name {
   font-family: var(--font);
   font-size: clamp(64px, 10vw, 160px);
-  font-weight: 800;
-  letter-spacing: -0.05em;
+  font-weight: 300;
+  letter-spacing: -0.04em;
   line-height: 1;
   color: var(--fg);
   user-select: none;
