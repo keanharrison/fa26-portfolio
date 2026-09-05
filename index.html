@@ -295,37 +295,20 @@
   <script>
     // ══════════════════════════════════════════
     // MacWindow — reusable macOS window shell
-    // Usage: MacWindow({ title, children })
     // ══════════════════════════════════════════
+    const desktop = document.querySelector('.desktop');
     let _zTop = 200;
-
-    function _makeDraggable(win, handle) {
-      let ox, oy, ol, ot;
-      handle.addEventListener('mousedown', e => {
-        if (e.target.classList.contains('mac-btn')) return;
-        ox = e.clientX; oy = e.clientY;
-        ol = parseInt(win.style.left) || 0;
-        ot = parseInt(win.style.top)  || 0;
-        win.style.zIndex = ++_zTop;
-        const move = e => {
-          win.style.left = ol + (e.clientX - ox) + 'px';
-          win.style.top  = ot + (e.clientY - oy) + 'px';
-        };
-        const up = () => {
-          document.removeEventListener('mousemove', move);
-          document.removeEventListener('mouseup', up);
-        };
-        document.addEventListener('mousemove', move);
-        document.addEventListener('mouseup', up);
-        e.preventDefault();
-      });
-    }
 
     function MacWindow({ title = '', children = '' } = {}) {
       const win = document.createElement('div');
       win.className = 'mac-window';
-      win.style.left   = 'calc(50% - 310px)';
-      win.style.top    = 'calc(50% - 264px)';
+
+      // Center on desktop in pixel coords
+      const dr = desktop.getBoundingClientRect();
+      const W = 620, TITLEBAR = 28, CONTENT_H = 500;
+      win.style.width  = W + 'px';
+      win.style.left   = Math.max(0, Math.round((dr.width  - W) / 2)) + 'px';
+      win.style.top    = Math.max(0, Math.round((dr.height - (TITLEBAR + CONTENT_H)) / 2)) + 'px';
       win.style.zIndex = ++_zTop;
 
       win.innerHTML = `
@@ -340,12 +323,91 @@
         <div class="mac-content">${children}</div>
       `;
 
-      win.querySelector('.mac-btn-red').addEventListener('click', () => {
+      const content  = win.querySelector('.mac-content');
+      const btnRed   = win.querySelector('.mac-btn-red');
+      const btnYellow= win.querySelector('.mac-btn-yellow');
+      const btnGreen = win.querySelector('.mac-btn-green');
+      const titlebar = win.querySelector('.mac-titlebar');
+
+      // Per-window state
+      win._minimized  = false;
+      win._maximized  = false;
+      let savedLeft, savedTop, savedWidth, savedContentH;
+
+      // Focus any window on click
+      win.addEventListener('mousedown', () => { win.style.zIndex = ++_zTop; });
+
+      // ── Red: close ──
+      btnRed.addEventListener('click', () => {
         win.dispatchEvent(new CustomEvent('close-window', { bubbles: false }));
         win.remove();
       });
-      win.addEventListener('mousedown', () => { win.style.zIndex = ++_zTop; });
-      _makeDraggable(win, win.querySelector('.mac-titlebar'));
+
+      // ── Yellow: minimize ──
+      btnYellow.addEventListener('click', () => {
+        win.style.display = 'none';
+        win._minimized = true;
+      });
+
+      // ── Restore (called externally when folder is double-clicked while minimized) ──
+      win.restore = () => {
+        win.style.display = 'flex';
+        win._minimized = false;
+        win.style.zIndex = ++_zTop;
+      };
+
+      // ── Green: maximize / restore ──
+      btnGreen.addEventListener('click', () => {
+        const dr = desktop.getBoundingClientRect();
+        if (!win._maximized) {
+          // Save current geometry
+          savedLeft      = parseFloat(win.style.left)  || 0;
+          savedTop       = parseFloat(win.style.top)   || 0;
+          savedWidth     = parseFloat(win.style.width) || W;
+          savedContentH  = content.style.height || '';
+          // Expand — leave 8px inset on sides/top, clear dock + small gap at bottom
+          const PAD          = 8;
+          const DOCK_RESERVE = Math.round(dr.height * 0.13); // clears dock area
+          win.style.left     = PAD + 'px';
+          win.style.top      = PAD + 'px';
+          win.style.width    = (dr.width - PAD * 2) + 'px';
+          content.style.height = (dr.height - PAD * 2 - DOCK_RESERVE - TITLEBAR) + 'px';
+          win._maximized = true;
+        } else {
+          // Restore saved geometry
+          win.style.left    = savedLeft  + 'px';
+          win.style.top     = savedTop   + 'px';
+          win.style.width   = savedWidth + 'px';
+          content.style.height = savedContentH;
+          win._maximized = false;
+        }
+      });
+
+      // ── Drag titlebar — clamped to desktop bounds ──
+      titlebar.addEventListener('mousedown', e => {
+        if (e.target.classList.contains('mac-btn')) return;
+        if (win._maximized) return; // no drag while maximized
+        const startMX = e.clientX, startMY = e.clientY;
+        const startL  = parseFloat(win.style.left) || 0;
+        const startT  = parseFloat(win.style.top)  || 0;
+        win.style.zIndex = ++_zTop;
+
+        function onMove(e) {
+          const dr     = desktop.getBoundingClientRect();
+          const newL   = Math.max(0, Math.min(startL + (e.clientX - startMX), dr.width  - win.offsetWidth));
+          const newT   = Math.max(0, Math.min(startT + (e.clientY - startMY), dr.height - win.offsetHeight));
+          win.style.left = newL + 'px';
+          win.style.top  = newT + 'px';
+        }
+        function onUp() {
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup',   onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup',   onUp);
+        e.preventDefault();
+      });
+
       return win;
     }
 
@@ -558,7 +620,11 @@
         const now = Date.now();
         if (now - lastClickTime < 400) {
           if (openWindows[id]) {
-            openWindows[id].style.zIndex = ++_zTop;
+            if (openWindows[id]._minimized) {
+              openWindows[id].restore();
+            } else {
+              openWindows[id].style.zIndex = ++_zTop;
+            }
           } else {
             const win = MacWindow({ title: name, children: buildWindowContent(id, exp) });
             openWindows[id] = win;
@@ -572,7 +638,6 @@
       return el;
     }
 
-    const desktop = document.querySelector('.desktop');
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
   </script>
 </html>
