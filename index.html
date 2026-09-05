@@ -226,6 +226,12 @@
       transform: translateY(-5px) scale(1.05);
       filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
     }
+    .desktop-icon.is-dragging,
+    .desktop-icon.is-dragging:hover {
+      transform: none;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.45));
+      cursor: grabbing;
+    }
 
     .folder-wrap {
       position: relative;
@@ -466,31 +472,7 @@
     // ══════════════════════════════════════════
     // DesktopItem — draggable folder icon
     // ══════════════════════════════════════════
-    const openWindows = {}; // track open windows per id
-
-    function _makeIconDraggable(el) {
-      let dragging = false, ox, oy, ol, ot, moved;
-      el.addEventListener('mousedown', e => {
-        if (e.button !== 0) return;
-        dragging = true;
-        moved = false;
-        ox = e.clientX; oy = e.clientY;
-        ol = parseInt(el.style.left) || el.offsetLeft;
-        ot = parseInt(el.style.top)  || el.offsetTop;
-        el.style.zIndex = ++_zTop;
-        e.preventDefault();
-      });
-      document.addEventListener('mousemove', e => {
-        if (!dragging) return;
-        const dx = e.clientX - ox, dy = e.clientY - oy;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
-        el.style.left = ol + dx + 'px';
-        el.style.top  = ot + dy + 'px';
-      });
-      document.addEventListener('mouseup', () => { dragging = false; });
-      // return whether the last press ended as a drag (not a click)
-      el._wasMoved = () => moved;
-    }
+    const openWindows = {};
 
     function DesktopItem(exp) {
       const { id, name, folderIcon, left, top } = exp;
@@ -506,34 +488,85 @@
         <span class="icon-label">${name}</span>
       `;
 
-      _makeIconDraggable(el);
+      // ── Drag logic ──
+      // All positions are in pixels relative to the .desktop container.
+      // We convert % initial values to px on the first mousedown so
+      // subsequent moves never mix unit types.
+      let active = false;   // mousedown is held
+      let didDrag = false;  // threshold crossed → treat as drag, not click
+      let mouseStartX, mouseStartY; // viewport coords at mousedown
+      let elStartLeft, elStartTop;  // px position of el at mousedown
 
-      // Single click — select highlight (simple visual)
-      el.addEventListener('click', () => {
-        if (el._wasMoved()) return;
-        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
-        el.classList.add('selected');
+      function toPx() {
+        // Convert el position to desktop-relative px once
+        const dr = desktop.getBoundingClientRect();
+        const er = el.getBoundingClientRect();
+        el.style.left = (er.left - dr.left) + 'px';
+        el.style.top  = (er.top  - dr.top)  + 'px';
+      }
+
+      el.addEventListener('mousedown', e => {
+        if (e.button !== 0) return;
+        toPx();
+        active       = true;
+        didDrag      = false;
+        mouseStartX  = e.clientX;
+        mouseStartY  = e.clientY;
+        elStartLeft  = parseFloat(el.style.left);
+        elStartTop   = parseFloat(el.style.top);
+        el.style.zIndex = ++_zTop;
+        e.preventDefault();
+
+        function onMove(e) {
+          if (!active) return;
+          const dx = e.clientX - mouseStartX;
+          const dy = e.clientY - mouseStartY;
+          if (!didDrag && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+            didDrag = true;
+            el.classList.add('is-dragging');
+          }
+          if (!didDrag) return;
+
+          const dr = desktop.getBoundingClientRect();
+          const newLeft = Math.max(0, Math.min(elStartLeft + dx, dr.width  - el.offsetWidth));
+          const newTop  = Math.max(0, Math.min(elStartTop  + dy, dr.height - el.offsetHeight));
+          el.style.left = newLeft + 'px';
+          el.style.top  = newTop  + 'px';
+        }
+
+        function onUp() {
+          active = false;
+          el.classList.remove('is-dragging');
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup',   onUp);
+        }
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup',   onUp);
       });
 
-      // Double-click — open or focus window
-      let lastClick = 0;
+      // ── Click / double-click ──
+      let lastClickTime = 0;
       el.addEventListener('click', () => {
-        if (el._wasMoved()) return;
+        if (didDrag) return; // drag ended — ignore
+
+        // Select
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+
+        // Double-click detection
         const now = Date.now();
-        if (now - lastClick < 400) {
+        if (now - lastClickTime < 400) {
           if (openWindows[id]) {
             openWindows[id].style.zIndex = ++_zTop;
           } else {
-            const win = MacWindow({
-              title: name,
-              children: buildWindowContent(id, exp),
-            });
+            const win = MacWindow({ title: name, children: buildWindowContent(id, exp) });
             openWindows[id] = win;
             win.addEventListener('close-window', () => delete openWindows[id]);
             desktop.appendChild(win);
           }
         }
-        lastClick = now;
+        lastClickTime = now;
       });
 
       return el;
