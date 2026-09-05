@@ -170,46 +170,7 @@
     <img class="screen-bg" src="assets/bg.jpg" alt="" />
     <div class="screen-gradient"></div>
 
-    <!-- Desktop Icons -->
-    <div class="desktop-icon" style="left: 14%; top: 18%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">Booz Allen</span>
-    </div>
-
-    <div class="desktop-icon" style="left: 64%; top: 12%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">UVA Darden</span>
-    </div>
-
-    <div class="desktop-icon" style="left: 74%; top: 34%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">Anthropic</span>
-    </div>
-
-    <div class="desktop-icon" style="left: 6%; top: 42%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">Stealth Startup</span>
-    </div>
-
-    <div class="desktop-icon" style="left: 20%; top: 60%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">Johnson Controls</span>
-    </div>
-
-    <div class="desktop-icon" style="left: 67%; top: 55%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">Beats by Dre</span>
-    </div>
-
-    <div class="desktop-icon" style="left: 78%; top: 66%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">KeanFit LLC</span>
-    </div>
-
-    <div class="desktop-icon" style="left: 8%; top: 68%;">
-      <div class="folder-wrap"><img class="folder-base" src="assets/icons/folder.png" alt="" /></div>
-      <span class="icon-label">TSG</span>
-    </div>
+    <!-- Desktop Icons rendered by JS -->
 
     <!-- Dock -->
     <div class="dock">
@@ -231,5 +192,38 @@
     </div>
 
   </div>
-</body>
+  <script>
+    // ── Experience data ──────────────────────────────────────────
+    // To add or edit an experience, only touch this array.
+    const EXPERIENCES = [
+      { id: 'booz-allen',       name: 'Booz Allen',       folderIcon: 'assets/icons/folder.png', left: '14%', top: '18%' },
+      { id: 'uva-darden',       name: 'UVA Darden',       folderIcon: 'assets/icons/folder.png', left: '64%', top: '12%' },
+      { id: 'anthropic',        name: 'Anthropic',        folderIcon: 'assets/icons/folder.png', left: '74%', top: '34%' },
+      { id: 'stealth-startup',  name: 'Stealth Startup',  folderIcon: 'assets/icons/folder.png', left: '6%',  top: '42%' },
+      { id: 'johnson-controls', name: 'Johnson Controls', folderIcon: 'assets/icons/folder.png', left: '20%', top: '60%' },
+      { id: 'beats-by-dre',     name: 'Beats by Dre',     folderIcon: 'assets/icons/folder.png', left: '67%', top: '55%' },
+      { id: 'keanfit',          name: 'KeanFit LLC',      folderIcon: 'assets/icons/folder.png', left: '78%', top: '66%' },
+      { id: 'tsg',              name: 'TSG',              folderIcon: 'assets/icons/folder.png', left: '8%',  top: '68%' },
+    ];
+
+    // ── DesktopItem component ────────────────────────────────────
+    function DesktopItem({ id, name, folderIcon, left, top }) {
+      const el = document.createElement('div');
+      el.className = 'desktop-icon';
+      el.dataset.id = id;
+      el.style.left = left;
+      el.style.top  = top;
+      el.innerHTML = `
+        <div class="folder-wrap">
+          <img class="folder-base" src="${folderIcon}" alt="" />
+        </div>
+        <span class="icon-label">${name}</span>
+      `;
+      return el;
+    }
+
+    // ── Render all experiences ───────────────────────────────────
+    const desktop = document.querySelector('.desktop');
+    EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
+  </script>
 </html>
