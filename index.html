@@ -130,6 +130,18 @@
     }
     .dock-icon.round img { border-radius: 50%; }
 
+    /* Profile icon: white background, smaller circular avatar */
+    .dock-icon-profile {
+      background: #ffffff;
+      border-radius: 12px;
+    }
+    .dock-icon-profile img {
+      width: 68%;
+      height: 68%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
     /* Hover title tab */
     .dock-icon::before {
       content: attr(title);
@@ -197,7 +209,7 @@
       <!-- Dock -->
       <div class="dock">
         <!-- Profile -->
-        <div class="dock-icon" title="Kean Harrison">
+        <div class="dock-icon dock-icon-profile" title="Kean Harrison">
           <img src="assets/icons/profile.jpg" alt="Kean Harrison" />
         </div>
 
@@ -208,11 +220,7 @@
           <img src="assets/icons/contacts.png" alt="Contacts" />
         </button>
 
-        <!-- Gmail -->
-        <a class="dock-icon" href="mailto:kean.thurman.harrison@gmail.com" title="Gmail">
-          <img src="assets/icons/gmail.png" alt="Gmail" />
-        </a>
-
+        <!-- Gmail removed -->
         <!-- LinkedIn -->
         <a class="dock-icon" href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener" title="LinkedIn">
           <img src="assets/icons/linkedin.png" alt="LinkedIn" />
