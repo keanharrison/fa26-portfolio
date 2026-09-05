@@ -248,6 +248,12 @@
       white-space: nowrap;
       letter-spacing: 0.01em;
     }
+
+    .desktop-icon.selected .folder-wrap {
+      border-radius: 10px;
+      outline: 2px solid rgba(255, 255, 255, 0.55);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
@@ -325,7 +331,10 @@
         <div class="mac-content">${children}</div>
       `;
 
-      win.querySelector('.mac-btn-red').addEventListener('click', () => win.remove());
+      win.querySelector('.mac-btn-red').addEventListener('click', () => {
+        win.dispatchEvent(new CustomEvent('close-window', { bubbles: false }));
+        win.remove();
+      });
       win.addEventListener('mousedown', () => { win.style.zIndex = ++_zTop; });
       _makeDraggable(win, win.querySelector('.mac-titlebar'));
       return win;
@@ -345,7 +354,143 @@
       { id: 'tsg',              name: 'TSG',              folderIcon: 'assets/icons/folder.png', left: '8%',  top: '68%' },
     ];
 
-    function DesktopItem({ id, name, folderIcon, left, top }) {
+    // ══════════════════════════════════════════
+    // Experience window content
+    // ══════════════════════════════════════════
+    const EXPERIENCE_CONTENT = {
+      'booz-allen': {
+        role: 'Software Engineer Intern',
+        period: 'Jun 2025 – Aug 2025',
+        bullets: [
+          'Built internal data pipeline tooling using Python and AWS Lambda to automate report generation for federal clients.',
+          'Contributed to a React-based dashboard for real-time mission analytics, reducing manual reporting time by 40%.',
+          'Collaborated in agile sprints with a cross-functional team of engineers and analysts.',
+          'Gained secret clearance exposure through secure development practices and classified environment protocols.',
+        ]
+      },
+      'uva-darden': {
+        role: 'Research Assistant',
+        period: 'Jan 2025 – Present',
+        bullets: [
+          'Assisted faculty with research on consumer behavior and decision-making frameworks.',
+          'Cleaned and analyzed large datasets using Python (pandas, matplotlib) for publication-ready outputs.',
+          'Contributed to white papers exploring behavioral economics in digital product design.',
+        ]
+      },
+      'anthropic': {
+        role: 'AI Policy & Safety Intern',
+        period: 'Summer 2024',
+        bullets: [
+          'Researched emergent behaviors in large language models and contributed to internal red-teaming evaluations.',
+          'Drafted policy memos on responsible AI deployment for regulated industries.',
+          'Participated in cross-functional working groups on model alignment and safety tooling.',
+        ]
+      },
+      'stealth-startup': {
+        role: 'Co-founder / Product Engineer',
+        period: '2024 – Present',
+        bullets: [
+          'Building a B2B SaaS product in stealth — combining LLM-driven workflows with enterprise integrations.',
+          'Responsible for product strategy, front-end engineering (React/Next.js), and early customer discovery.',
+          'Iterating toward PMF with a small founding team; currently in closed beta.',
+        ]
+      },
+      'johnson-controls': {
+        role: 'Product Management Intern',
+        period: 'Summer 2023',
+        bullets: [
+          'Supported the OpenBlue smart building platform team with competitive analysis and feature roadmapping.',
+          'Conducted customer interviews and synthesized insights to inform Q3 sprint priorities.',
+          'Delivered a presentation to senior leadership on IoT integration opportunities in commercial real estate.',
+        ]
+      },
+      'beats-by-dre': {
+        role: 'Brand Strategy Intern',
+        period: 'Summer 2022',
+        bullets: [
+          'Worked within the brand and marketing organization on campaign strategy for product launches.',
+          'Developed consumer persona frameworks used in go-to-market planning for a new headphone line.',
+          'Presented findings on Gen Z audio culture trends to the brand leadership team.',
+        ]
+      },
+      'keanfit': {
+        role: 'Founder & CEO',
+        period: '2021 – Present',
+        bullets: [
+          'Founded a fitness coaching business offering personalized training programs and nutrition guidance.',
+          'Grew to 30+ active clients through social media marketing and referral-based growth.',
+          'Managed scheduling, invoicing, and content creation — building operational systems from scratch.',
+        ]
+      },
+      'tsg': {
+        role: 'Technology Strategy Associate',
+        period: '2023 – 2024',
+        bullets: [
+          'Supported digital transformation initiatives for enterprise clients across healthcare and finance verticals.',
+          'Performed gap analyses comparing current-state IT architecture against best-in-class benchmarks.',
+          'Contributed to client deliverables covering cloud migration, data governance, and vendor selection.',
+        ]
+      },
+    };
+
+    function buildWindowContent(id, exp) {
+      const data = EXPERIENCE_CONTENT[id] || {};
+      const role   = data.role   || '';
+      const period = data.period || '';
+      const bullets = (data.bullets || []).map(b => `<li>${b}</li>`).join('');
+      return `
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <img src="${exp.folderIcon}" alt="" style="width:48px;height:48px;object-fit:contain;flex-shrink:0;" />
+          <div>
+            <div style="font-size:17px;font-weight:600;color:#1a1a1a;letter-spacing:-0.02em;">${exp.name}</div>
+            <div style="font-size:13px;color:#555;margin-top:2px;">${role}</div>
+            <div style="font-size:12px;color:#888;margin-top:1px;">${period}</div>
+          </div>
+        </div>
+        <ul style="padding-left:18px;display:flex;flex-direction:column;gap:10px;">
+          ${bullets}
+        </ul>
+        <style>
+          .mac-content ul li {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+          }
+        </style>
+      `;
+    }
+
+    // ══════════════════════════════════════════
+    // DesktopItem — draggable folder icon
+    // ══════════════════════════════════════════
+    const openWindows = {}; // track open windows per id
+
+    function _makeIconDraggable(el) {
+      let dragging = false, ox, oy, ol, ot, moved;
+      el.addEventListener('mousedown', e => {
+        if (e.button !== 0) return;
+        dragging = true;
+        moved = false;
+        ox = e.clientX; oy = e.clientY;
+        ol = parseInt(el.style.left) || el.offsetLeft;
+        ot = parseInt(el.style.top)  || el.offsetTop;
+        el.style.zIndex = ++_zTop;
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const dx = e.clientX - ox, dy = e.clientY - oy;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+        el.style.left = ol + dx + 'px';
+        el.style.top  = ot + dy + 'px';
+      });
+      document.addEventListener('mouseup', () => { dragging = false; });
+      // return whether the last press ended as a drag (not a click)
+      el._wasMoved = () => moved;
+    }
+
+    function DesktopItem(exp) {
+      const { id, name, folderIcon, left, top } = exp;
       const el = document.createElement('div');
       el.className = 'desktop-icon';
       el.dataset.id = id;
@@ -357,14 +502,41 @@
         </div>
         <span class="icon-label">${name}</span>
       `;
+
+      _makeIconDraggable(el);
+
+      // Single click — select highlight (simple visual)
+      el.addEventListener('click', () => {
+        if (el._wasMoved()) return;
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+      });
+
+      // Double-click — open or focus window
+      let lastClick = 0;
+      el.addEventListener('click', () => {
+        if (el._wasMoved()) return;
+        const now = Date.now();
+        if (now - lastClick < 400) {
+          if (openWindows[id]) {
+            openWindows[id].style.zIndex = ++_zTop;
+          } else {
+            const win = MacWindow({
+              title: name,
+              children: buildWindowContent(id, exp),
+            });
+            openWindows[id] = win;
+            win.addEventListener('close-window', () => delete openWindows[id]);
+            desktop.appendChild(win);
+          }
+        }
+        lastClick = now;
+      });
+
       return el;
     }
 
     const desktop = document.querySelector('.desktop');
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
-
-    // ── Demo window (design approval only — remove after approval) ──
-    const demo = MacWindow({ title: 'Experience', children: '' });
-    desktop.appendChild(demo);
   </script>
 </html>
