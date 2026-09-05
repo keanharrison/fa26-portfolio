@@ -415,14 +415,14 @@
     // Experience data
     // ══════════════════════════════════════════
     const EXPERIENCES = [
-      { id: 'booz-allen',       name: 'Booz Allen',       folderIcon: 'assets/icons/folder.png', left: '14%', top: '18%' },
-      { id: 'uva-darden',       name: 'UVA Darden',       folderIcon: 'assets/icons/folder.png', left: '64%', top: '12%' },
-      { id: 'anthropic',        name: 'Anthropic',        folderIcon: 'assets/icons/folder.png', left: '74%', top: '34%' },
-      { id: 'stealth-startup',  name: 'Stealth Startup',  folderIcon: 'assets/icons/folder.png', left: '6%',  top: '42%' },
-      { id: 'johnson-controls', name: 'Johnson Controls', folderIcon: 'assets/icons/folder.png', left: '20%', top: '60%' },
-      { id: 'beats-by-dre',     name: 'Beats by Dre',     folderIcon: 'assets/icons/folder.png', left: '67%', top: '55%' },
-      { id: 'keanfit',          name: 'KeanFit LLC',      folderIcon: 'assets/icons/folder.png', left: '78%', top: '66%' },
-      { id: 'tsg',              name: 'TSG',              folderIcon: 'assets/icons/folder.png', left: '8%',  top: '68%' },
+      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', left: '14%', top: '18%' },
+      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', left: '64%', top: '12%' },
+      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', left: '74%', top: '34%' },
+      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', left: '6%',  top: '42%' },
+      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', left: '20%', top: '60%' },
+      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', left: '67%', top: '55%' },
+      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', left: '78%', top: '66%' },
+      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', left: '8%',  top: '68%' },
     ];
 
     // ══════════════════════════════════════════
@@ -430,103 +430,141 @@
     // ══════════════════════════════════════════
     const EXPERIENCE_CONTENT = {
       'booz-allen': {
-        role: 'Software Engineer Intern',
-        period: 'Jun 2025 – Aug 2025',
+        company: 'Booz Allen Hamilton',
+        role: 'Product Engineer Intern',
+        period: 'Jun – Aug 2026 · 3 months',
         bullets: [
-          'Built internal data pipeline tooling using Python and AWS Lambda to automate report generation for federal clients.',
-          'Contributed to a React-based dashboard for real-time mission analytics, reducing manual reporting time by 40%.',
-          'Collaborated in agile sprints with a cross-functional team of engineers and analysts.',
-          'Gained secret clearance exposure through secure development practices and classified environment protocols.',
-        ]
+          'Built LUMA, a decision-support platform for DoD clients, designing its frontend in React/TypeScript.',
+          'Integrated MCP/API workflows across 1,000+ synthetic data points.',
+          'Turned stakeholder discovery into PRDs, wireframes, and feature requirements.',
+          'Presented LUMA to Booz Allen\'s C-suite.',
+        ],
+        skills: ['React', 'TypeScript', 'MCP', 'Figma', 'Product Management', 'User Research'],
       },
       'uva-darden': {
-        role: 'Research Assistant',
-        period: 'Jan 2025 – Present',
+        company: 'UVA Darden School of Business',
+        role: 'Co-Founder & CTO',
+        period: 'Nov 2025 – Jun 2026 · 8 months',
         bullets: [
-          'Assisted faculty with research on consumer behavior and decision-making frameworks.',
-          'Cleaned and analyzed large datasets using Python (pandas, matplotlib) for publication-ready outputs.',
-          'Contributed to white papers exploring behavioral economics in digital product design.',
-        ]
+          'Co-founded Vantage, an AI fintech startup selected for Darden iLab.',
+          'Conducted 30 discovery interviews and built a Python savings simulation.',
+          'Co-founded Speak (2nd venture) and engineered its mobile-first MVP in Next.js 14, React, and TypeScript.',
+          'Presented product vision and technical architecture to investors at Demo Night.',
+        ],
+        skills: ['Entrepreneurship', 'Python', 'Next.js', 'React', 'TypeScript', 'Product Validation', 'Technical Architecture'],
       },
       'anthropic': {
-        role: 'AI Policy & Safety Intern',
-        period: 'Summer 2024',
+        company: 'Anthropic',
+        role: 'Product Ambassador',
+        period: 'Aug – Dec 2025 · 5 months',
         bullets: [
-          'Researched emergent behaviors in large language models and contributed to internal red-teaming evaluations.',
-          'Drafted policy memos on responsible AI deployment for regulated industries.',
-          'Participated in cross-functional working groups on model alignment and safety tooling.',
-        ]
+          'Selected to represent Anthropic at UVA.',
+          'Drove 300+ Claude signups through demos and outreach.',
+          'Organized the Claude for Good Hackathon with Anthropic and McIntire.',
+          'Helped 175+ attendees across 45 teams build AI tools for UVA.',
+        ],
+        skills: ['Product Demos', 'Community Growth', 'Event Leadership', 'AI', 'Public Speaking'],
       },
       'stealth-startup': {
-        role: 'Co-founder / Product Engineer',
-        period: '2024 – Present',
+        company: 'Stealth Startup',
+        role: 'Technical Product Manager Intern',
+        period: 'Jul – Sep 2025 · 3 months',
         bullets: [
-          'Building a B2B SaaS product in stealth — combining LLM-driven workflows with enterprise integrations.',
-          'Responsible for product strategy, front-end engineering (React/Next.js), and early customer discovery.',
-          'Iterating toward PMF with a small founding team; currently in closed beta.',
-        ]
+          'Built a RAG pipeline for long-term LLM context retention.',
+          'Improved response relevance 70% and accuracy 58%.',
+          'Evaluated vector retrieval strategies and latency tradeoffs.',
+          'Optimized retrieval for founder decision-support workflows.',
+        ],
+        skills: ['RAG', 'LLMs', 'Vector Retrieval', 'Product Management', 'AI Systems'],
       },
       'johnson-controls': {
-        role: 'Product Management Intern',
-        period: 'Summer 2023',
+        company: 'Johnson Controls International',
+        role: 'Sales Engineer Intern',
+        period: 'May – Aug 2025 · 4 months',
         bullets: [
-          'Supported the OpenBlue smart building platform team with competitive analysis and feature roadmapping.',
-          'Conducted customer interviews and synthesized insights to inform Q3 sprint priorities.',
-          'Delivered a presentation to senior leadership on IoT integration opportunities in commercial real estate.',
-        ]
+          'Analyzed 4,000 customer data points to identify conversion drop-offs.',
+          'Generated $7K+ in sales pipeline in month 1 of the internship.',
+          'Ranked as the top-performing sales intern.',
+          'Delivered analytical findings to manager.',
+        ],
+        skills: ['Sales Engineering', 'Data Analysis', 'Customer Insights', 'Pipeline Analysis', 'Excel'],
       },
       'beats-by-dre': {
-        role: 'Brand Strategy Intern',
-        period: 'Summer 2022',
+        company: 'Beats by Dre',
+        role: 'Product Analyst',
+        period: 'Mar – May 2025 · 3 months',
         bullets: [
-          'Worked within the brand and marketing organization on campaign strategy for product launches.',
-          'Developed consumer persona frameworks used in go-to-market planning for a new headphone line.',
-          'Presented findings on Gen Z audio culture trends to the brand leadership team.',
-        ]
+          'Analyzed 4,945 reviews across 54 competitor products.',
+          'Identified Gen Z feature gaps and product tradeoffs.',
+          'Developed an all-in-one speaker concept from the research.',
+          'Delivered a PRD and final recommendation to Lead Product Managers at Beats.',
+        ],
+        skills: ['Product Analytics', 'Competitive Research', 'Consumer Insights', 'PRDs', 'Product Strategy'],
       },
       'keanfit': {
-        role: 'Founder & CEO',
-        period: '2021 – Present',
+        company: 'KeanFit LLC',
+        role: 'Founder',
+        period: 'Aug 2023 – Mar 2025 · 1 yr 8 mo',
         bullets: [
-          'Founded a fitness coaching business offering personalized training programs and nutrition guidance.',
-          'Grew to 30+ active clients through social media marketing and referral-based growth.',
-          'Managed scheduling, invoicing, and content creation — building operational systems from scratch.',
-        ]
+          'Identified an affordability gap in personal training and founded KeanFit.',
+          'Built the business\'s market analysis, website, and acquisition strategy.',
+          'Acquired all 9 Q1 clients through LinkedIn, web, and direct outreach.',
+          'Delivered fitness programs that improved tracked outcomes 27%.',
+        ],
+        skills: ['Entrepreneurship', 'Market Analysis', 'Client Acquisition', 'Sales', 'Fitness Programming'],
       },
       'tsg': {
-        role: 'Technology Strategy Associate',
-        period: '2023 – 2024',
+        company: 'Technē Strategy Group',
+        role: 'Tech Lead',
+        period: 'Jan – May 2026 · 5 months',
         bullets: [
-          'Supported digital transformation initiatives for enterprise clients across healthcare and finance verticals.',
-          'Performed gap analyses comparing current-state IT architecture against best-in-class benchmarks.',
-          'Contributed to client deliverables covering cloud migration, data governance, and vendor selection.',
-        ]
+          'Evaluated OpenAI, Gemini, and Grok for public-sector Oracle deployment.',
+          'Designed a 24-task benchmark for agentic and reasoning capabilities.',
+          'Delivered go/no-go LLM procurement recommendations.',
+          'Led a 5-person team across an 80-day engagement.',
+        ],
+        skills: ['LLM Evaluation', 'Benchmarking', 'Team Leadership', 'AI Strategy', 'OCI'],
       },
     };
 
     function buildWindowContent(id, exp) {
-      const data = EXPERIENCE_CONTENT[id] || {};
-      const role   = data.role   || '';
-      const period = data.period || '';
-      const bullets = (data.bullets || []).map(b => `<li>${b}</li>`).join('');
+      const d = EXPERIENCE_CONTENT[id] || {};
+      const company = d.company || exp.name;
+      const role    = d.role    || '';
+      const period  = d.period  || '';
+      const bullets = (d.bullets || []).map(b => `<li>${b}</li>`).join('');
+      const skills  = (d.skills  || [])
+        .map(s => `<span style="
+          display:inline-block;
+          padding:3px 10px;
+          border-radius:20px;
+          background:rgba(0,0,0,0.07);
+          font-size:11px;
+          font-weight:500;
+          color:#333;
+          letter-spacing:0.01em;
+          white-space:nowrap;
+        ">${s}</span>`)
+        .join('');
       return `
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
-          <img src="${exp.folderIcon}" alt="" style="width:48px;height:48px;object-fit:contain;flex-shrink:0;" />
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;">
+          <img src="${exp.folderIcon}" alt="" style="width:44px;height:44px;object-fit:contain;flex-shrink:0;" />
           <div>
-            <div style="font-size:17px;font-weight:600;color:#1a1a1a;letter-spacing:-0.02em;">${exp.name}</div>
-            <div style="font-size:13px;color:#555;margin-top:2px;">${role}</div>
-            <div style="font-size:12px;color:#888;margin-top:1px;">${period}</div>
+            <div style="font-size:16px;font-weight:600;color:#1a1a1a;letter-spacing:-0.02em;line-height:1.2;">${company}</div>
+            <div style="font-size:13px;font-weight:500;color:#444;margin-top:3px;">${role}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;letter-spacing:0.01em;">${period}</div>
           </div>
         </div>
-        <ul style="padding-left:18px;display:flex;flex-direction:column;gap:10px;">
+        <ul style="padding-left:18px;display:flex;flex-direction:column;gap:9px;margin-bottom:22px;">
           ${bullets}
         </ul>
+        ${skills ? `
+        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:16px;">
+          <div style="font-size:10px;font-weight:600;color:#999;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Skills</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">${skills}</div>
+        </div>` : ''}
         <style>
-          .mac-content ul li {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #333;
-          }
+          .mac-content ul li { font-size: 13.5px; line-height: 1.65; color: #333; }
         </style>
       `;
     }
