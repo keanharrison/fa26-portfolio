@@ -9,7 +9,7 @@
 
     html, body {
       height: 100%;
-      background: #e8e8e8;
+      background: #f8f8f8;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -23,8 +23,7 @@
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.55;
-      mix-blend-mode: multiply;
+      opacity: 0.35;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
       background-repeat: repeat;
     }
@@ -89,9 +88,17 @@
       inset: 0;
       pointer-events: none;
       opacity: 0.14;
-      mix-blend-mode: overlay;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
       background-repeat: repeat;
+    }
+
+    /* Dark bottom gradient for dock legibility */
+    .screen-gradient {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.72) 100%);
+      opacity: 0.4;
     }
   </style>
 </head>
@@ -100,6 +107,7 @@
     <div class="macbook-screen">
       <img class="screen-bg" src="assets/skydive.jpg" alt="" />
       <div class="screen-grain"></div>
+      <div class="screen-gradient"></div>
     </div>
   </div>
 </body>
