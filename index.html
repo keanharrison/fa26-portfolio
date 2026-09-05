@@ -175,7 +175,55 @@
       flex-shrink: 0;
     }
 
-    /* Notes/Resume icon */
+    /* ── Desktop Icons ── */
+    .desktop-icon {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+    .desktop-icon:hover {
+      transform: translateY(-5px) scale(1.05);
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
+    }
+
+    .folder-wrap {
+      position: relative;
+      width: 76px;
+      height: 76px;
+    }
+    .folder-wrap .folder-base {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .folder-wrap .folder-logo {
+      position: absolute;
+      /* Sit in the body area of the folder, below the tab */
+      top: 58%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 62%;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+
+    .icon-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: #fff;
+      text-align: center;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
     .notes-icon {
       width: 48px;
       height: 48px;
@@ -205,6 +253,15 @@
       <img class="screen-bg" src="assets/skydive.jpg" alt="" />
       <div class="screen-grain"></div>
       <div class="screen-gradient"></div>
+
+      <!-- Desktop Icons -->
+      <div class="desktop-icon" style="left: 18%; top: 28%;">
+        <div class="folder-wrap">
+          <img class="folder-base" src="assets/icons/folder.png" alt="" />
+          <img class="folder-logo" src="assets/icons/booz-allen.png" alt="Booz Allen" />
+        </div>
+        <span class="icon-label">Booz Allen</span>
+      </div>
 
       <!-- Dock -->
       <div class="dock">
