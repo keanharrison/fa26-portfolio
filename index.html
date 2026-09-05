@@ -551,31 +551,25 @@
       `;
 
       // ── Drag logic ──
-      // All positions are in pixels relative to the .desktop container.
-      // We convert % initial values to px on the first mousedown so
-      // subsequent moves never mix unit types.
-      let active = false;   // mousedown is held
-      let didDrag = false;  // threshold crossed → treat as drag, not click
-      let mouseStartX, mouseStartY; // viewport coords at mousedown
-      let elStartLeft, elStartTop;  // px position of el at mousedown
-
-      function toPx() {
-        // Convert el position to desktop-relative px once
-        const dr = desktop.getBoundingClientRect();
-        const er = el.getBoundingClientRect();
-        el.style.left = (er.left - dr.left) + 'px';
-        el.style.top  = (er.top  - dr.top)  + 'px';
-      }
+      // elStartLeft/Top are read from getBoundingClientRect on mousedown
+      // but are NOT written back to el.style until the drag threshold is
+      // crossed — so a plain click never changes the folder's position.
+      let active = false;
+      let didDrag = false;
+      let mouseStartX, mouseStartY;
+      let elStartLeft, elStartTop;
 
       el.addEventListener('mousedown', e => {
         if (e.button !== 0) return;
-        toPx();
+        // Read current desktop-relative position without touching el.style
+        const dr = desktop.getBoundingClientRect();
+        const er = el.getBoundingClientRect();
+        elStartLeft  = er.left - dr.left;
+        elStartTop   = er.top  - dr.top;
         active       = true;
         didDrag      = false;
         mouseStartX  = e.clientX;
         mouseStartY  = e.clientY;
-        elStartLeft  = parseFloat(el.style.left);
-        elStartTop   = parseFloat(el.style.top);
         el.style.zIndex = ++_zTop;
         e.preventDefault();
 
@@ -585,6 +579,9 @@
           const dy = e.clientY - mouseStartY;
           if (!didDrag && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
             didDrag = true;
+            // Commit px position to style only now, right before first move
+            el.style.left = elStartLeft + 'px';
+            el.style.top  = elStartTop  + 'px';
             el.classList.add('is-dragging');
           }
           if (!didDrag) return;
