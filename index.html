@@ -177,11 +177,52 @@
       padding: 0;
       flex-shrink: 0;
       transition: filter 0.1s ease;
+      position: relative;
     }
     .mac-btn-red    { background: #ff5f56; }
     .mac-btn-yellow { background: #ffbd2e; cursor: default; }
     .mac-btn-green  { background: #27c93f; cursor: default; }
-    .mac-btn-red:hover { filter: brightness(0.88); }
+
+    /* Traffic-light hover symbols — all appear together on controls hover */
+    .mac-btn::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.12s ease;
+      pointer-events: none;
+      line-height: 1;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .mac-controls:hover .mac-btn::before { opacity: 1; }
+
+    /* Red: × */
+    .mac-btn-red::before {
+      content: '×';
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Yellow: − */
+    .mac-btn-yellow::before {
+      content: '−';
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(0, 0, 0, 0.5);
+      margin-top: -0.5px;
+    }
+
+    /* Green: expand arrows (two corner marks + diagonal) */
+    .mac-btn-green::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M4.8 1h2.2v2.2M3.2 7H1V4.8' stroke='black' stroke-opacity='0.5' stroke-width='1.25' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='6.8' y1='1.2' x2='1.2' y2='6.8' stroke='black' stroke-opacity='0.5' stroke-width='1.25' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
 
     /* Title text */
     .mac-title {
