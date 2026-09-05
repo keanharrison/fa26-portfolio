@@ -236,15 +236,14 @@ html.dark        .icon-moon { display: none; }
 /* Hero */
 .hero-section { margin-bottom: 80px; }
 
-.hero-headline {
-  font-size: clamp(2rem, 4.8vw, 3.8rem);
+.hero-name {
+  font-size: clamp(2.2rem, 5vw, 4rem);
   font-weight: 800;
-  line-height: 1.1;
   letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--fg);
   margin-bottom: 20px;
 }
-.hl-dark  { color: var(--fg); }
-.hl-muted { color: var(--muted); }
 
 .hero-sub {
   font-size: 15px;
