@@ -8,52 +8,22 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
+      width: 100%;
       height: 100%;
-      background: #f8f8f8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
+      overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Grain on page background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.35;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-    }
-
-    /* ── MacBook frame ── */
-    .macbook-frame {
+    /* ── Full-viewport desktop ── */
+    .desktop {
       position: relative;
-      z-index: 1;
-      width: min(90vw, 1080px);
-      aspect-ratio: 16 / 10;
-      background: linear-gradient(175deg, #e6e6e6 0%, #d4d4d4 100%);
-      border-radius: 22px;
-      padding: 13px;
-      box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.07),
-        0 4px 12px rgba(0, 0, 0, 0.06),
-        0 24px 64px rgba(0, 0, 0, 0.09);
-    }
-
-    /* ── Screen ── */
-    .macbook-screen {
-      position: relative;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       background: #1a1a1a;
-      border-radius: 10px;
       overflow: hidden;
     }
 
+    /* Portrait background */
     .screen-bg {
       position: absolute;
       inset: 0;
@@ -65,6 +35,7 @@
       display: block;
     }
 
+    /* Grain */
     .screen-grain {
       position: absolute;
       inset: 0;
@@ -74,6 +45,7 @@
       background-repeat: repeat;
     }
 
+    /* Bottom gradient for dock legibility */
     .screen-gradient {
       position: absolute;
       inset: 0;
@@ -100,6 +72,7 @@
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
       white-space: nowrap;
       overflow: visible;
+      z-index: 10;
     }
 
     .dock-icon {
@@ -127,19 +100,6 @@
       object-fit: cover;
       display: block;
       border-radius: 12px;
-    }
-    .dock-icon.round img { border-radius: 50%; }
-
-    /* Profile icon: white background, smaller circular avatar */
-    .dock-icon-profile {
-      background: #ffffff;
-      border-radius: 12px;
-    }
-    .dock-icon-profile img {
-      width: 68%;
-      height: 68%;
-      border-radius: 50%;
-      object-fit: cover;
     }
 
     /* Hover title tab */
@@ -185,6 +145,7 @@
       cursor: pointer;
       user-select: none;
       transition: transform 0.2s ease, filter 0.2s ease;
+      z-index: 5;
     }
     .desktop-icon:hover {
       transform: translateY(-5px) scale(1.05);
@@ -204,7 +165,6 @@
     }
     .folder-wrap .folder-logo {
       position: absolute;
-      /* Sit in the body area of the folder, below the tab */
       top: 58%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -215,7 +175,6 @@
     }
 
     .icon-label {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 11px;
       font-weight: 500;
       color: #fff;
@@ -224,74 +183,42 @@
       white-space: nowrap;
       letter-spacing: 0.01em;
     }
-    .notes-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: linear-gradient(160deg, #ffd60a 0%, #f4a800 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 8px 9px;
-      gap: 5px;
-      pointer-events: none;
-    }
-    .notes-line {
-      height: 2px;
-      border-radius: 1px;
-      background: rgba(120, 80, 0, 0.45);
-    }
-    .notes-line:nth-child(1) { width: 100%; }
-    .notes-line:nth-child(2) { width: 75%; }
-    .notes-line:nth-child(3) { width: 55%; }
   </style>
 </head>
 <body>
-  <div class="macbook-frame">
-    <div class="macbook-screen">
-      <img class="screen-bg" src="assets/skydive.jpg" alt="" />
-      <div class="screen-grain"></div>
-      <div class="screen-gradient"></div>
+  <div class="desktop">
+    <img class="screen-bg" src="assets/skydive.jpg" alt="" />
+    <div class="screen-grain"></div>
+    <div class="screen-gradient"></div>
 
-      <!-- Desktop Icons -->
-      <div class="desktop-icon" style="left: 18%; top: 28%;">
-        <div class="folder-wrap">
-          <img class="folder-base" src="assets/icons/folder.png" alt="" />
-          <img class="folder-logo" src="assets/icons/booz-allen.png" alt="Booz Allen" />
-        </div>
-        <span class="icon-label">Booz Allen</span>
+    <!-- Desktop Icons -->
+    <div class="desktop-icon" style="left: 18%; top: 28%;">
+      <div class="folder-wrap">
+        <img class="folder-base" src="assets/icons/folder.png" alt="" />
+        <img class="folder-logo" src="assets/icons/booz-allen.png" alt="Booz Allen" />
       </div>
-
-      <!-- Dock -->
-      <div class="dock">
-        <!-- Contacts (popup TBD) -->
-        <button class="dock-icon" id="btn-contacts" title="Contacts">
-          <img src="assets/icons/contacts.png" alt="Contacts" />
-        </button>
-
-        <!-- LinkedIn -->
-        <a class="dock-icon" href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener" title="LinkedIn">
-          <img src="assets/icons/linkedin.png" alt="LinkedIn" />
-        </a>
-
-        <!-- Instagram -->
-        <a class="dock-icon" href="https://www.instagram.com/keanharrison/" target="_blank" rel="noopener" title="Instagram">
-          <img src="assets/icons/instagram.png" alt="Instagram" />
-        </a>
-
-        <!-- Photos -->
-        <a class="dock-icon" title="Photos">
-          <img src="assets/icons/photos.png" alt="Photos" />
-        </a>
-
-        <!-- X -->
-        <a class="dock-icon" href="https://x.com/keanharr?s=11" target="_blank" rel="noopener" title="X">
-          <img src="assets/icons/x.png" alt="X" />
-        </a>
-      </div>
-
+      <span class="icon-label">Booz Allen</span>
     </div>
+
+    <!-- Dock -->
+    <div class="dock">
+      <button class="dock-icon" id="btn-contacts" title="Contacts">
+        <img src="assets/icons/contacts.png" alt="Contacts" />
+      </button>
+      <a class="dock-icon" href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener" title="LinkedIn">
+        <img src="assets/icons/linkedin.png" alt="LinkedIn" />
+      </a>
+      <a class="dock-icon" href="https://www.instagram.com/keanharrison/" target="_blank" rel="noopener" title="Instagram">
+        <img src="assets/icons/instagram.png" alt="Instagram" />
+      </a>
+      <a class="dock-icon" title="Photos">
+        <img src="assets/icons/photos.png" alt="Photos" />
+      </a>
+      <a class="dock-icon" href="https://x.com/keanharr?s=11" target="_blank" rel="noopener" title="X">
+        <img src="assets/icons/x.png" alt="X" />
+      </a>
+    </div>
+
   </div>
 </body>
 </html>
