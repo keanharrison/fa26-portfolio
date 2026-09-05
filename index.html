@@ -169,8 +169,8 @@
       z-index: 1;
     }
     .mac-btn {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       border: 0.5px solid rgba(0, 0, 0, 0.12);
       cursor: default;
@@ -186,14 +186,15 @@
     /* Traffic-light hover symbols — all appear together on controls hover */
     .mac-btn::before {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       opacity: 0;
       transition: opacity 0.12s ease;
       pointer-events: none;
-      line-height: 1;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1;
     }
     .mac-controls:hover .mac-btn::before { opacity: 1; }
 
@@ -208,10 +209,9 @@
     /* Yellow: − */
     .mac-btn-yellow::before {
       content: '−';
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       color: rgba(0, 0, 0, 0.5);
-      margin-top: -0.5px;
     }
 
     /* Green: expand arrows (two corner marks + diagonal) */
@@ -339,6 +339,18 @@
     // ══════════════════════════════════════════
     const desktop = document.querySelector('.desktop');
     let _zTop = 200;
+    const openWindows = {};
+
+    // Click outside any open window (but not the dock) → close all windows
+    desktop.addEventListener('mousedown', e => {
+      if (!e.target.closest('.mac-window') && !e.target.closest('.dock')) {
+        document.querySelectorAll('.mac-window').forEach(w => {
+          w.dispatchEvent(new CustomEvent('close-window', { bubbles: false }));
+          w.remove();
+        });
+        Object.keys(openWindows).forEach(k => delete openWindows[k]);
+      }
+    });
 
     function MacWindow({ title = '', children = '' } = {}) {
       const win = document.createElement('div');
@@ -613,7 +625,6 @@
     // ══════════════════════════════════════════
     // DesktopItem — draggable folder icon
     // ══════════════════════════════════════════
-    const openWindows = {};
 
     function DesktopItem(exp) {
       const { id, name, folderIcon, left, top } = exp;
