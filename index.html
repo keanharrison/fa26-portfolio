@@ -125,7 +125,92 @@
       flex-shrink: 0;
     }
 
-    /* ── Desktop Icons ── */
+    /* ══════════════════════════════════════════
+       MacWindow component
+    ══════════════════════════════════════════ */
+    .mac-window {
+      position: absolute;
+      width: 620px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(246, 246, 246, 0.94);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.22),
+        0 8px 24px rgba(0, 0, 0, 0.28),
+        0 28px 80px rgba(0, 0, 0, 0.42);
+    }
+
+    /* Title bar */
+    .mac-titlebar {
+      height: 28px;
+      min-height: 28px;
+      background: rgba(216, 216, 220, 0.97);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      cursor: grab;
+      user-select: none;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .mac-titlebar:active { cursor: grabbing; }
+
+    /* Traffic lights */
+    .mac-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+    }
+    .mac-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 0.5px solid rgba(0, 0, 0, 0.12);
+      cursor: default;
+      padding: 0;
+      flex-shrink: 0;
+      transition: filter 0.1s ease;
+    }
+    .mac-btn-red    { background: #ff5f56; }
+    .mac-btn-yellow { background: #ffbd2e; cursor: default; }
+    .mac-btn-green  { background: #27c93f; cursor: default; }
+    .mac-btn-red:hover { filter: brightness(0.88); }
+
+    /* Title text */
+    .mac-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.68);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* Scrollable content area */
+    .mac-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 28px 28px 32px;
+      height: 500px;
+      background: rgba(248, 248, 248, 0.97);
+    }
+    .mac-content::-webkit-scrollbar       { width: 7px; }
+    .mac-content::-webkit-scrollbar-track { background: transparent; }
+    .mac-content::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.18);
+      border-radius: 4px;
+    }
     .desktop-icon {
       position: absolute;
       display: flex;
@@ -193,8 +278,62 @@
 
   </div>
   <script>
-    // ── Experience data ──────────────────────────────────────────
-    // To add or edit an experience, only touch this array.
+    // ══════════════════════════════════════════
+    // MacWindow — reusable macOS window shell
+    // Usage: MacWindow({ title, children })
+    // ══════════════════════════════════════════
+    let _zTop = 200;
+
+    function _makeDraggable(win, handle) {
+      let ox, oy, ol, ot;
+      handle.addEventListener('mousedown', e => {
+        if (e.target.classList.contains('mac-btn')) return;
+        ox = e.clientX; oy = e.clientY;
+        ol = parseInt(win.style.left) || 0;
+        ot = parseInt(win.style.top)  || 0;
+        win.style.zIndex = ++_zTop;
+        const move = e => {
+          win.style.left = ol + (e.clientX - ox) + 'px';
+          win.style.top  = ot + (e.clientY - oy) + 'px';
+        };
+        const up = () => {
+          document.removeEventListener('mousemove', move);
+          document.removeEventListener('mouseup', up);
+        };
+        document.addEventListener('mousemove', move);
+        document.addEventListener('mouseup', up);
+        e.preventDefault();
+      });
+    }
+
+    function MacWindow({ title = '', children = '' } = {}) {
+      const win = document.createElement('div');
+      win.className = 'mac-window';
+      win.style.left   = 'calc(50% - 310px)';
+      win.style.top    = 'calc(50% - 264px)';
+      win.style.zIndex = ++_zTop;
+
+      win.innerHTML = `
+        <div class="mac-titlebar">
+          <div class="mac-controls">
+            <button class="mac-btn mac-btn-red"    aria-label="Close"></button>
+            <button class="mac-btn mac-btn-yellow" aria-label="Minimize"></button>
+            <button class="mac-btn mac-btn-green"  aria-label="Maximize"></button>
+          </div>
+          <span class="mac-title">${title}</span>
+        </div>
+        <div class="mac-content">${children}</div>
+      `;
+
+      win.querySelector('.mac-btn-red').addEventListener('click', () => win.remove());
+      win.addEventListener('mousedown', () => { win.style.zIndex = ++_zTop; });
+      _makeDraggable(win, win.querySelector('.mac-titlebar'));
+      return win;
+    }
+
+    // ══════════════════════════════════════════
+    // Experience data
+    // ══════════════════════════════════════════
     const EXPERIENCES = [
       { id: 'booz-allen',       name: 'Booz Allen',       folderIcon: 'assets/icons/folder.png', left: '14%', top: '18%' },
       { id: 'uva-darden',       name: 'UVA Darden',       folderIcon: 'assets/icons/folder.png', left: '64%', top: '12%' },
@@ -206,7 +345,6 @@
       { id: 'tsg',              name: 'TSG',              folderIcon: 'assets/icons/folder.png', left: '8%',  top: '68%' },
     ];
 
-    // ── DesktopItem component ────────────────────────────────────
     function DesktopItem({ id, name, folderIcon, left, top }) {
       const el = document.createElement('div');
       el.className = 'desktop-icon';
@@ -222,8 +360,11 @@
       return el;
     }
 
-    // ── Render all experiences ───────────────────────────────────
     const desktop = document.querySelector('.desktop');
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
+
+    // ── Demo window (design approval only — remove after approval) ──
+    const demo = MacWindow({ title: 'Experience', children: '' });
+    desktop.appendChild(demo);
   </script>
 </html>
