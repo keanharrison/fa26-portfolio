@@ -411,7 +411,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 7px;
-      cursor: default;
+      cursor: pointer;
     }
     .photos-album-cover {
       width: 158px;
@@ -442,6 +442,43 @@
       font-size: 11.5px;
       color: #999;
       margin-top: -4px;
+    }
+
+    /* Album view (inside open album) */
+    .photos-album-view {
+      padding: 22px 28px 32px;
+    }
+    .photos-nav {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .photos-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      padding: 4px 8px 4px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #0071e3;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: background 0.12s ease;
+    }
+    .photos-back-btn:hover { background: rgba(0, 113, 227, 0.08); }
+    .photos-back-btn svg { flex-shrink: 0; }
+    .photos-album-view-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .photos-album-body {
+      flex: 1;
     }
   </style>
 </head>
@@ -928,13 +965,12 @@
         id: 'about-me',
         title: 'About Me',
         content: [
-          "I'm Kean Harrison, a senior at the University of Virginia majoring in Cognitive Science and minoring in Data Science and Engineering Business.",
-          "For the past 2.5 years, I've been building software solutions to solve a variety of pain points uncovered through rigorous discovery interviews. Since I've come to UVA, I drove the adoption of Claude Code as a Product Ambassador for Anthropic, led a team of 5 engineers on a research consultancy project for Oracle, and got accepted into UVA Darden's ultra-competitive iLab Incubator program, where my Co-Founder and I received $5K in non-dilutive funding.",
-          "I believe great products don't just solve problems — they are deeply resonant, strategically grounded, and culturally aware. My approach to product blends granular consumer insight, well-founded features, and continuous iteration to ensure consistent quality for target users.",
-          "When I'm not building or learning, you'll find me hunting for vintage clothing, capturing life's beauty with my camera, exploring coffee shops with friends, or drawing. I'm always open to collaborating on projects that push innovative boundaries and challenge conventional thinking.",
-          "Let's connect:\n\nkean.thurman.harrison@gmail.com\ntru3us@virginia.edu (UVA email)\n(703) 850-6946",
+          `I'm Kean Harrison, a fourth-year at <a href="https://www.virginia.edu" target="_blank" rel="noopener" style="color:#0071e3;text-decoration:none;">UVA</a> majoring in Cognitive Science and minoring in Data Science and Business.`,
+          `For the past 2 years, I've been crafting software solutions to solve intense user pain points uncovered through discovery interviews. Since coming to UVA, I drove Claude adoption on grounds as a Product Ambassador for Anthropic, led a team of 5 engineers on a research project for Oracle, and got accepted into UVA Darden's ultra-competitive iLab Incubator program, securing $5K in non-dilutive funding.`,
+          `I believe great products don't just solve problems — they must be deeply resonant, strategically grounded, and culturally aware. My approach to product blends granular consumer insight, well-founded features, and continuous iteration to ensure consistent quality.`,
+          `When I'm not building, you'll find me hunting for vintage clothes, exploring coffee shops with friends, or drawing. I'm always open to collaborating on projects that push innovative boundaries and challenge conventional thinking.`,
+          `Let's connect:\n\nkean.thurman.harrison@gmail.com\ntru3us@virginia.edu (UVA email)\n(703) 850-6946`,
         ],
-        // Fixed creation timestamp per spec
         createdAt: new Date('2026-09-05T21:51:00'),
       },
     ];
@@ -1033,16 +1069,46 @@
     }
 
     /**
-     * Renders the full Photos landing screen from an array of PhotoAlbum objects.
-     * @param {PhotoAlbum[]} albums
+     * Renders the album detail view (empty grid area, back nav, title).
+     * @param {PhotoAlbum} album
      * @returns {string} HTML string
      */
-    function buildPhotosLanding(albums) {
+    function buildAlbumView(album) {
+      const chevron = `<svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.5 1.5L1.5 6.5L6.5 11.5" stroke="#0071e3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
       return `
-        <div class="photos-shell">
-          <div class="photos-section-heading">Albums</div>
-          <div class="photos-albums">${albums.map(AlbumTile).join('')}</div>
+        <div class="photos-shell photos-album-view">
+          <div class="photos-nav">
+            <button class="photos-back-btn" id="photos-back">
+              ${chevron} Albums
+            </button>
+          </div>
+          <div class="photos-album-view-title">${album.title}</div>
+          <div class="photos-album-body"></div>
         </div>`;
+    }
+
+    /** Navigation state — null = landing, string = album id */
+    const photosState = { selectedAlbumId: null };
+
+    function renderPhotos(content) {
+      if (photosState.selectedAlbumId === null) {
+        content.innerHTML = buildPhotosLanding(ALBUMS);
+        content.querySelectorAll('.photos-album').forEach(el => {
+          el.addEventListener('click', () => {
+            photosState.selectedAlbumId = el.dataset.albumId;
+            renderPhotos(content);
+          });
+        });
+      } else {
+        const album = ALBUMS.find(a => a.id === photosState.selectedAlbumId);
+        content.innerHTML = buildAlbumView(album);
+        content.querySelector('#photos-back').addEventListener('click', () => {
+          photosState.selectedAlbumId = null;
+          renderPhotos(content);
+        });
+      }
     }
 
     let photosWin = null;
@@ -1053,9 +1119,11 @@
         else { photosWin.style.zIndex = ++_zTop; }
         return;
       }
+      photosState.selectedAlbumId = null;
       photosWin = MacWindow({ title: 'Photos', width: 860, noPadding: true });
-      photosWin.querySelector('.mac-content').style.height = '580px';
-      photosWin.querySelector('.mac-content').innerHTML = buildPhotosLanding(ALBUMS);
+      const content = photosWin.querySelector('.mac-content');
+      content.style.height = '580px';
+      renderPhotos(content);
       photosWin.addEventListener('close-window', () => { photosWin = null; });
       desktop.appendChild(photosWin);
     });
