@@ -392,31 +392,39 @@
       background: #ffffff;
       overflow-y: auto;
       border-radius: 0 0 11px 11px;
-      display: flex;
-      flex-direction: column;
+      padding: 26px 28px 32px;
+    }
+    .photos-section-heading {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
     }
     .photos-albums {
       display: flex;
-      justify-content: center;
-      gap: 28px;
-      padding: 52px 40px 48px;
+      gap: 22px;
       flex-wrap: wrap;
     }
     .photos-album {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 10px;
+      gap: 7px;
       cursor: default;
     }
     .photos-album-cover {
-      width: 234px;
-      height: 234px;
-      border-radius: 14px;
+      width: 158px;
+      height: 158px;
+      border-radius: 10px;
       overflow: hidden;
-      background: #e8e8e8;
+      background: #d8d8d8;
       flex-shrink: 0;
-      position: relative;
+      transition: filter 0.15s ease, transform 0.15s ease;
+    }
+    .photos-album:hover .photos-album-cover {
+      filter: brightness(0.93);
+      transform: scale(1.01);
     }
     .photos-album-cover img {
       width: 100%;
@@ -424,27 +432,16 @@
       object-fit: cover;
       display: block;
     }
-    /* Placeholder shown when no cover image is set */
-    .photos-album-cover-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .photos-album-cover-placeholder svg {
-      opacity: 0.22;
-    }
     .photos-album-name {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12.5px;
+      font-weight: 500;
       color: #1a1a1a;
       letter-spacing: -0.01em;
     }
     .photos-album-count {
-      font-size: 12px;
+      font-size: 11.5px;
       color: #999;
-      margin-top: -6px;
+      margin-top: -4px;
     }
   </style>
 </head>
@@ -1005,25 +1002,11 @@
       { id: 'life',    name: 'Life',    cover: null, photos: [] },
     ];
 
-    // Placeholder SVG used when an album has no cover photo yet
-    const placeholderSVG = (bg) => `
-      <div class="photos-album-cover-placeholder" style="background:${bg};">
-        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="6" y="14" width="44" height="32" rx="4" stroke="#1a1a1a" stroke-width="2.2"/>
-          <circle cx="28" cy="30" r="8" stroke="#1a1a1a" stroke-width="2.2"/>
-          <path d="M20 14l3-5h10l3 5" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="44" cy="21" r="2" fill="#1a1a1a"/>
-        </svg>
-      </div>`;
-
-    // Placeholder backgrounds per album (subtle, photo-evocative)
-    const albumBg = { travel: '#d6e4ec', hobbies: '#e4dcd6', life: '#dce4d8' };
-
     function buildPhotosHTML(albums) {
       const cards = albums.map(a => {
         const coverHTML = a.cover
           ? `<img src="${a.cover}" alt="${a.name}" />`
-          : placeholderSVG(albumBg[a.id] || '#e8e8e8');
+          : ''; // neutral gray from CSS background
         const countHTML = a.photos.length > 0
           ? `<div class="photos-album-count">${a.photos.length} photo${a.photos.length !== 1 ? 's' : ''}</div>`
           : '';
@@ -1035,7 +1018,11 @@
           </div>`;
       }).join('');
 
-      return `<div class="photos-shell"><div class="photos-albums">${cards}</div></div>`;
+      return `
+        <div class="photos-shell">
+          <div class="photos-section-heading">Albums</div>
+          <div class="photos-albums">${cards}</div>
+        </div>`;
     }
 
     let photosWin = null;
