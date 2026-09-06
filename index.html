@@ -996,32 +996,52 @@
     // ══════════════════════════════════════════
     // Photos app
     // ══════════════════════════════════════════
+
+    /**
+     * @typedef {{ id: string, src: string, alt: string, width?: number, height?: number }} Photo
+     * @typedef {{ id: string, title: string, cover: string|null, photos: Photo[] }} PhotoAlbum
+     */
+
+    /** @type {PhotoAlbum[]} */
     const ALBUMS = [
-      { id: 'travel',  name: 'Travel',  cover: null, photos: [] },
-      { id: 'hobbies', name: 'Hobbies', cover: null, photos: [] },
-      { id: 'life',    name: 'Life',    cover: null, photos: [] },
+      { id: 'travel',  title: 'Travel',  cover: null, photos: [] },
+      { id: 'hobbies', title: 'Hobbies', cover: null, photos: [] },
+      { id: 'life',    title: 'Life',    cover: null, photos: [] },
     ];
 
-    function buildPhotosHTML(albums) {
-      const cards = albums.map(a => {
-        const coverHTML = a.cover
-          ? `<img src="${a.cover}" alt="${a.name}" />`
-          : ''; // neutral gray from CSS background
-        const countHTML = a.photos.length > 0
-          ? `<div class="photos-album-count">${a.photos.length} photo${a.photos.length !== 1 ? 's' : ''}</div>`
-          : '';
-        return `
-          <div class="photos-album" data-album-id="${a.id}">
-            <div class="photos-album-cover">${coverHTML}</div>
-            <div class="photos-album-name">${a.name}</div>
-            ${countHTML}
-          </div>`;
-      }).join('');
+    /**
+     * Renders one album tile.
+     * To add a new album: push a new object into ALBUMS — no other changes needed.
+     * To set a cover: set album.cover to an image path.
+     * To add photos: push Photo objects into album.photos.
+     * @param {PhotoAlbum} album
+     * @returns {string} HTML string
+     */
+    function AlbumTile(album) {
+      const coverHTML = album.cover
+        ? `<img src="${album.cover}" alt="${album.title}" />`
+        : ''; // neutral gray #d8d8d8 from .photos-album-cover CSS
+      const countHTML = album.photos.length > 0
+        ? `<div class="photos-album-count">${album.photos.length} photo${album.photos.length !== 1 ? 's' : ''}</div>`
+        : '';
+      return `
+        <div class="photos-album" data-album-id="${album.id}">
+          <div class="photos-album-cover">${coverHTML}</div>
+          <div class="photos-album-name">${album.title}</div>
+          ${countHTML}
+        </div>`;
+    }
 
+    /**
+     * Renders the full Photos landing screen from an array of PhotoAlbum objects.
+     * @param {PhotoAlbum[]} albums
+     * @returns {string} HTML string
+     */
+    function buildPhotosLanding(albums) {
       return `
         <div class="photos-shell">
           <div class="photos-section-heading">Albums</div>
-          <div class="photos-albums">${cards}</div>
+          <div class="photos-albums">${albums.map(AlbumTile).join('')}</div>
         </div>`;
     }
 
@@ -1035,7 +1055,7 @@
       }
       photosWin = MacWindow({ title: 'Photos', width: 860, noPadding: true });
       photosWin.querySelector('.mac-content').style.height = '580px';
-      photosWin.querySelector('.mac-content').innerHTML = buildPhotosHTML(ALBUMS);
+      photosWin.querySelector('.mac-content').innerHTML = buildPhotosLanding(ALBUMS);
       photosWin.addEventListener('close-window', () => { photosWin = null; });
       desktop.appendChild(photosWin);
     });
