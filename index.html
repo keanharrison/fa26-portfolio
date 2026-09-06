@@ -488,6 +488,9 @@
         role: 'Co-Founder & CTO',
         period: 'Nov 2025 – Jun 2026 · 8 months',
         logo: 'assets/logos/uva-darden.jpg',
+        links: [
+          { label: 'Darden iLab', href: 'https://www.darden.virginia.edu/batten-institute/entrepreneurship/ilab' },
+        ],
         bullets: [
           'Co-founded Vantage, an AI fintech startup selected for Darden iLab.',
           'Conducted 30 discovery interviews and built a Python savings simulation.',
@@ -501,6 +504,10 @@
         role: 'Product Ambassador',
         period: 'Aug – Dec 2025 · 5 months',
         logo: 'assets/logos/anthropic.jpg',
+        links: [
+          { label: 'Claude for Good — Event Recap', href: 'https://experience.mcintire.virginia.edu/event-recap/claude-for-good-hackathon-showcases-student-ingenuity-and-the-future-of-ai-at-uva/' },
+          { label: 'Claude for Good — Event Page', href: 'https://events.mcintire.virginia.edu/event/claude-for-good-hackathon' },
+        ],
         bullets: [
           'Selected to represent Anthropic at UVA.',
           'Drove 300+ Claude signups through demos and outreach.',
@@ -553,7 +560,9 @@
         role: 'Founder',
         period: 'Aug 2023 – Mar 2025 · 1 yr 8 mo',
         logo: 'assets/logos/keanfit.png',
-        link: { label: 'View on LinkedIn', href: 'https://www.linkedin.com/company/keanfit/posts/?viewAsMember=true' },
+        links: [
+          { label: 'View on LinkedIn', href: 'https://www.linkedin.com/company/keanfit/posts/?viewAsMember=true' },
+        ],
         bullets: [
           'Identified an affordability gap in personal training and founded KeanFit.',
           'Built the business\'s market analysis, website, and acquisition strategy.',
@@ -567,6 +576,9 @@
         role: 'Tech Lead',
         period: 'Jan – May 2026 · 5 months',
         logo: 'assets/logos/tsg.png',
+        links: [
+          { label: 'Technē on Instagram', href: 'https://www.instagram.com/tsguva/' },
+        ],
         bullets: [
           'Evaluated OpenAI, Gemini, and Grok for public-sector Oracle deployment.',
           'Designed a 24-task benchmark for agentic and reasoning capabilities.',
@@ -584,7 +596,7 @@
       const period  = d.period  || '';
       const logoSrc = d.logo    || exp.folderIcon;
       const isLogo  = !!d.logo;
-      const link    = d.link    || null;
+      const links   = d.links || (d.link ? [d.link] : []);
       const bullets = (d.bullets || []).map(b => `<li>${b}</li>`).join('');
       const skills  = (d.skills  || [])
         .map(s => `<span style="
@@ -622,13 +634,13 @@
           ${bullets}
         </ul>
         ${skills ? `
-        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:16px;margin-bottom:${link ? '16px' : '0'};">
+        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:16px;margin-bottom:${links.length ? '16px' : '0'};">
           <div style="font-size:10px;font-weight:600;color:#999;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Skills</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;">${skills}</div>
         </div>` : ''}
-        ${link ? `
-        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:14px;">
-          <a href="${link.href}" target="_blank" rel="noopener" style="
+        ${links.length ? `
+        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:14px;display:flex;flex-direction:column;gap:8px;">
+          ${links.map(l => `<a href="${l.href}" target="_blank" rel="noopener" style="
             font-size:12px;
             font-weight:500;
             color:#0071e3;
@@ -636,11 +648,11 @@
             display:inline-flex;
             align-items:center;
             gap:5px;
-          ">${link.label}
+          ">${l.label}
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M2 8L8 2M8 2H4M8 2V6" stroke="#0071e3" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-          </a>
+          </a>`).join('')}
         </div>` : ''}
         <style>
           .mac-content ul li { font-size: 13.5px; line-height: 1.65; color: #333; }
