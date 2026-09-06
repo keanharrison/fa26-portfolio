@@ -1117,6 +1117,19 @@
     }
 
     /**
+     * Renders the Photos landing screen from the albums array.
+     * @param {PhotoAlbum[]} albums
+     * @returns {string} HTML string
+     */
+    function buildPhotosLanding(albums) {
+      return `
+        <div class="photos-shell">
+          <div class="photos-section-heading">Albums</div>
+          <div class="photos-albums">${albums.map(AlbumTile).join('')}</div>
+        </div>`;
+    }
+
+    /**
      * Justified-row photo grid.
      * Packs photos into rows so each row fills containerWidth,
      * preserving each photo's original aspect ratio.
