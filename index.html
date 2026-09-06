@@ -406,7 +406,7 @@
       <a class="dock-icon" href="https://www.instagram.com/keanharrison/" target="_blank" rel="noopener" title="Instagram">
         <img src="assets/icons/instagram.png" alt="Instagram" />
       </a>
-      <a class="dock-icon" title="Photos">
+      <a class="dock-icon" id="btn-photos" title="Photos">
         <img src="assets/icons/photos.png" alt="Photos" />
       </a>
       <a class="dock-icon" href="https://x.com/keanharr?s=11" target="_blank" rel="noopener" title="X">
@@ -931,6 +931,24 @@
       notesWin.querySelector('.mac-content').innerHTML = buildNotesHTML(NOTES, NOTES[0].id);
       notesWin.addEventListener('close-window', () => { notesWin = null; });
       desktop.appendChild(notesWin);
+    });
+
+    // ══════════════════════════════════════════
+    // Photos app
+    // ══════════════════════════════════════════
+    let photosWin = null;
+
+    document.getElementById('btn-photos').addEventListener('click', () => {
+      if (photosWin) {
+        if (photosWin._minimized) { photosWin.restore(); }
+        else { photosWin.style.zIndex = ++_zTop; }
+        return;
+      }
+      photosWin = MacWindow({ title: 'Photos', width: 860, noPadding: true });
+      // Taller content area for photo viewing
+      photosWin.querySelector('.mac-content').style.height = '580px';
+      photosWin.addEventListener('close-window', () => { photosWin = null; });
+      desktop.appendChild(photosWin);
     });
   </script>
 </html>
