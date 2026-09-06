@@ -289,6 +289,104 @@
       outline: 2px solid rgba(255, 255, 255, 0.55);
       outline-offset: 2px;
     }
+
+    /* ══════════════════════════════════════════
+       Notes app inner layout
+    ══════════════════════════════════════════ */
+    .notes-shell {
+      display: flex;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 0 0 11px 11px;
+    }
+    .notes-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #f5f4ef;
+      border-right: 1px solid rgba(0,0,0,0.11);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .notes-sidebar-header {
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      text-align: center;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      flex-shrink: 0;
+    }
+    .notes-list {
+      overflow-y: auto;
+      flex: 1;
+    }
+    .notes-list-item {
+      padding: 9px 14px 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+    .notes-list-item:hover:not(.notes-list-selected) {
+      background: rgba(0,0,0,0.04);
+    }
+    .notes-list-selected {
+      background: rgba(255, 204, 0, 0.32);
+    }
+    .notes-list-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notes-list-meta {
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .notes-list-preview {
+      font-size: 11px;
+      color: #bbb;
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notes-content {
+      flex: 1;
+      background: #fdfcf8;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .notes-content > * {
+      flex-shrink: 0;
+    }
+    .notes-date {
+      font-size: 11.5px;
+      color: #aaa;
+      text-align: center;
+      padding: 18px 24px 12px;
+    }
+    .notes-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      padding: 0 24px 12px;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .notes-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 24px 24px;
+      font-size: 14.5px;
+      color: #333;
+      line-height: 1.7;
+    }
   </style>
 </head>
 <body>
@@ -300,6 +398,9 @@
 
     <!-- Dock -->
     <div class="dock">
+      <button class="dock-icon" id="btn-notes" title="Notes">
+        <img src="assets/icons/notes.png" alt="Notes" />
+      </button>
       <button class="dock-icon" id="btn-contacts" title="Contacts">
         <img src="assets/icons/contacts.png" alt="Contacts" />
       </button>
@@ -340,15 +441,15 @@
       }
     });
 
-    function MacWindow({ title = '', children = '' } = {}) {
+    function MacWindow({ title = '', children = '', width = 620, noPadding = false } = {}) {
       const win = document.createElement('div');
       win.className = 'mac-window';
 
       // Center on desktop in pixel coords
       const dr = desktop.getBoundingClientRect();
-      const W = 620, TITLEBAR = 28, CONTENT_H = 500;
-      win.style.width  = W + 'px';
-      win.style.left   = Math.max(0, Math.round((dr.width  - W) / 2)) + 'px';
+      const TITLEBAR = 28, CONTENT_H = 500;
+      win.style.width  = width + 'px';
+      win.style.left   = Math.max(0, Math.round((dr.width  - width) / 2)) + 'px';
       win.style.top    = Math.max(0, Math.round((dr.height - (TITLEBAR + CONTENT_H)) / 2)) + 'px';
       win.style.zIndex = ++_zTop;
 
@@ -365,6 +466,7 @@
       `;
 
       const content  = win.querySelector('.mac-content');
+      if (noPadding) content.style.padding = '0';
       const btnRed   = win.querySelector('.mac-btn-red');
       const btnYellow= win.querySelector('.mac-btn-yellow');
       const btnGreen = win.querySelector('.mac-btn-green');
@@ -764,5 +866,67 @@
     }
 
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
+
+    // ══════════════════════════════════════════
+    // Notes app
+    // ══════════════════════════════════════════
+    const NOTES = [
+      {
+        id: 'about-me',
+        title: 'About Me',
+        content: '',
+        createdAt: new Date(),
+      },
+    ];
+
+    function fmtLong(d) {
+      return d.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit' });
+    }
+    function fmtShort(d) {
+      const now = new Date();
+      const diffDays = Math.floor((now - d) / 86400000);
+      if (diffDays === 0) return d.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit' });
+      if (diffDays < 7)  return d.toLocaleString('en-US', { weekday: 'long' });
+      return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function buildNotesHTML(notes, activeId) {
+      const active = notes.find(n => n.id === activeId) || notes[0];
+      const listItems = notes.map(n => `
+        <div class="notes-list-item${n.id === active.id ? ' notes-list-selected' : ''}" data-note-id="${n.id}">
+          <div class="notes-list-title">${n.title}</div>
+          <div class="notes-list-meta">${fmtShort(n.createdAt)}</div>
+          <div class="notes-list-preview">${n.content || 'No additional text'}</div>
+        </div>`).join('');
+
+      return `
+        <div class="notes-shell">
+          <div class="notes-sidebar">
+            <div class="notes-sidebar-header">${notes.length} Note${notes.length !== 1 ? 's' : ''}</div>
+            <div class="notes-list">${listItems}</div>
+          </div>
+          <div class="notes-content">
+            <div class="notes-date">${fmtLong(active.createdAt)}</div>
+            <div class="notes-title">${active.title}</div>
+            <div class="notes-body">${active.content}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    let notesWin = null;
+
+    document.getElementById('btn-notes').addEventListener('click', () => {
+      if (notesWin) {
+        if (notesWin._minimized) { notesWin.restore(); }
+        else { notesWin.style.zIndex = ++_zTop; }
+        return;
+      }
+      notesWin = MacWindow({ title: 'Notes', width: 700, noPadding: true });
+      notesWin.querySelector('.mac-content').innerHTML = buildNotesHTML(NOTES, NOTES[0].id);
+      notesWin.addEventListener('close-window', () => { notesWin = null; });
+      desktop.appendChild(notesWin);
+    });
   </script>
 </html>
