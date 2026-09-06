@@ -444,14 +444,21 @@
       margin-top: -4px;
     }
 
-    /* Album view (inside open album) */
-    .photos-album-view {
-      padding: 22px 28px 32px;
+    /* Album view — override base shell for flex column layout */
+    .photos-shell.photos-album-view {
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .photos-album-header {
+      flex-shrink: 0;
+      padding: 20px 28px 14px;
     }
     .photos-nav {
       display: flex;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .photos-back-btn {
       display: inline-flex;
@@ -475,10 +482,51 @@
       font-weight: 700;
       color: #1a1a1a;
       letter-spacing: -0.02em;
-      margin-bottom: 20px;
     }
+    /* Scrollable body */
     .photos-album-body {
       flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 12px 28px 28px;
+    }
+    .photos-album-body::-webkit-scrollbar       { width: 7px; }
+    .photos-album-body::-webkit-scrollbar-track { background: transparent; }
+    .photos-album-body::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.15);
+      border-radius: 4px;
+    }
+
+    /* Photo grid — justified rows */
+    .photos-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .photos-grid-row {
+      display: flex;
+      gap: 4px;
+      align-items: flex-start;
+    }
+    .photos-grid-item {
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #d8d8d8;
+      cursor: default;
+    }
+    .photos-grid-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: filter 0.12s ease;
+    }
+    .photos-grid-item:hover img { filter: brightness(0.88); cursor: pointer; }
+    .photos-empty {
+      font-size: 13px;
+      color: #aaa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding-top: 8px;
     }
   </style>
 </head>
@@ -1069,7 +1117,53 @@
     }
 
     /**
-     * Renders the album detail view (empty grid area, back nav, title).
+     * Justified-row photo grid.
+     * Packs photos into rows so each row fills containerWidth,
+     * preserving each photo's original aspect ratio.
+     * @param {Photo[]} photos
+     * @param {number} containerWidth  — measured at render time
+     * @returns {string} HTML string
+     */
+    function PhotoGrid(photos, containerWidth) {
+      if (!photos.length) return '<div class="photos-empty">No Photos</div>';
+
+      const GAP    = 4;
+      const TARGET = 160; // target row height in px
+
+      // Build justified rows
+      const rows = [];
+      let row = [], arSum = 0;
+
+      for (const photo of photos) {
+        const ar = photo.width / photo.height;
+        row.push({ photo, ar });
+        arSum += ar;
+        const h = (containerWidth - GAP * (row.length - 1)) / arSum;
+        if (h <= TARGET) {
+          rows.push({ items: row, height: Math.round(h), last: false });
+          row = []; arSum = 0;
+        }
+      }
+      // Final incomplete row — left-align at target height (don't stretch)
+      if (row.length) rows.push({ items: row, height: TARGET, last: true });
+
+      const rowsHTML = rows.map(({ items, height, last }) => {
+        const style = last ? 'justify-content:flex-start' : '';
+        const cells = items.map(({ photo, ar }) => {
+          const w = Math.round(ar * height);
+          return `<div class="photos-grid-item" style="width:${w}px;height:${height}px;" data-photo-id="${photo.id}">
+            <img src="${photo.src}" alt="${photo.alt}" loading="lazy" />
+          </div>`;
+        }).join('');
+        return `<div class="photos-grid-row" style="${style}">${cells}</div>`;
+      }).join('');
+
+      return `<div class="photos-grid">${rowsHTML}</div>`;
+    }
+
+    /**
+     * Renders the album detail view shell.
+     * The grid is inserted separately after DOM measurement.
      * @param {PhotoAlbum} album
      * @returns {string} HTML string
      */
@@ -1079,20 +1173,26 @@
       </svg>`;
       return `
         <div class="photos-shell photos-album-view">
-          <div class="photos-nav">
-            <button class="photos-back-btn" id="photos-back">
-              ${chevron} Albums
-            </button>
+          <div class="photos-album-header">
+            <div class="photos-nav">
+              <button class="photos-back-btn" id="photos-back">${chevron} Albums</button>
+            </div>
+            <div class="photos-album-view-title">${album.title}</div>
           </div>
-          <div class="photos-album-view-title">${album.title}</div>
-          <div class="photos-album-body"></div>
+          <div class="photos-album-body" id="photos-body"></div>
         </div>`;
     }
+
+    /** Holds the active ResizeObserver so it can be disconnected on back-nav */
+    let _photosRO = null;
 
     /** Navigation state — null = landing, string = album id */
     const photosState = { selectedAlbumId: null };
 
     function renderPhotos(content) {
+      // Disconnect any previous observer
+      if (_photosRO) { _photosRO.disconnect(); _photosRO = null; }
+
       if (photosState.selectedAlbumId === null) {
         content.innerHTML = buildPhotosLanding(ALBUMS);
         content.querySelectorAll('.photos-album').forEach(el => {
@@ -1104,10 +1204,23 @@
       } else {
         const album = ALBUMS.find(a => a.id === photosState.selectedAlbumId);
         content.innerHTML = buildAlbumView(album);
+
+        // Back button
         content.querySelector('#photos-back').addEventListener('click', () => {
           photosState.selectedAlbumId = null;
           renderPhotos(content);
         });
+
+        // Measure body, render grid, observe resizes
+        const body = content.querySelector('#photos-body');
+        function renderGrid() {
+          const w = body.clientWidth;
+          if (w > 0) body.innerHTML = PhotoGrid(album.photos, w);
+        }
+        // Defer first render one frame so layout is settled
+        requestAnimationFrame(renderGrid);
+        _photosRO = new ResizeObserver(renderGrid);
+        _photosRO.observe(body);
       }
     }
 
@@ -1124,7 +1237,10 @@
       const content = photosWin.querySelector('.mac-content');
       content.style.height = '580px';
       renderPhotos(content);
-      photosWin.addEventListener('close-window', () => { photosWin = null; });
+      photosWin.addEventListener('close-window', () => {
+        if (_photosRO) { _photosRO.disconnect(); _photosRO = null; }
+        photosWin = null;
+      });
       desktop.appendChild(photosWin);
     });
   </script>
