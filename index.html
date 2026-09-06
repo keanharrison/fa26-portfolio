@@ -383,6 +383,69 @@
     }
     .notes-body p { margin: 0 0 14px; }
     .notes-body p:last-child { margin-bottom: 0; }
+
+    /* ══════════════════════════════════════════
+       Photos app
+    ══════════════════════════════════════════ */
+    .photos-shell {
+      height: 580px;
+      background: #ffffff;
+      overflow-y: auto;
+      border-radius: 0 0 11px 11px;
+      display: flex;
+      flex-direction: column;
+    }
+    .photos-albums {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      padding: 52px 40px 48px;
+      flex-wrap: wrap;
+    }
+    .photos-album {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: default;
+    }
+    .photos-album-cover {
+      width: 234px;
+      height: 234px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #e8e8e8;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .photos-album-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Placeholder shown when no cover image is set */
+    .photos-album-cover-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photos-album-cover-placeholder svg {
+      opacity: 0.22;
+    }
+    .photos-album-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
+    }
+    .photos-album-count {
+      font-size: 12px;
+      color: #999;
+      margin-top: -6px;
+    }
   </style>
 </head>
 <body>
@@ -936,6 +999,45 @@
     // ══════════════════════════════════════════
     // Photos app
     // ══════════════════════════════════════════
+    const ALBUMS = [
+      { id: 'travel',  name: 'Travel',  cover: null, photos: [] },
+      { id: 'hobbies', name: 'Hobbies', cover: null, photos: [] },
+      { id: 'life',    name: 'Life',    cover: null, photos: [] },
+    ];
+
+    // Placeholder SVG used when an album has no cover photo yet
+    const placeholderSVG = (bg) => `
+      <div class="photos-album-cover-placeholder" style="background:${bg};">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="14" width="44" height="32" rx="4" stroke="#1a1a1a" stroke-width="2.2"/>
+          <circle cx="28" cy="30" r="8" stroke="#1a1a1a" stroke-width="2.2"/>
+          <path d="M20 14l3-5h10l3 5" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="44" cy="21" r="2" fill="#1a1a1a"/>
+        </svg>
+      </div>`;
+
+    // Placeholder backgrounds per album (subtle, photo-evocative)
+    const albumBg = { travel: '#d6e4ec', hobbies: '#e4dcd6', life: '#dce4d8' };
+
+    function buildPhotosHTML(albums) {
+      const cards = albums.map(a => {
+        const coverHTML = a.cover
+          ? `<img src="${a.cover}" alt="${a.name}" />`
+          : placeholderSVG(albumBg[a.id] || '#e8e8e8');
+        const countHTML = a.photos.length > 0
+          ? `<div class="photos-album-count">${a.photos.length} photo${a.photos.length !== 1 ? 's' : ''}</div>`
+          : '';
+        return `
+          <div class="photos-album" data-album-id="${a.id}">
+            <div class="photos-album-cover">${coverHTML}</div>
+            <div class="photos-album-name">${a.name}</div>
+            ${countHTML}
+          </div>`;
+      }).join('');
+
+      return `<div class="photos-shell"><div class="photos-albums">${cards}</div></div>`;
+    }
+
     let photosWin = null;
 
     document.getElementById('btn-photos').addEventListener('click', () => {
@@ -945,8 +1047,8 @@
         return;
       }
       photosWin = MacWindow({ title: 'Photos', width: 860, noPadding: true });
-      // Taller content area for photo viewing
       photosWin.querySelector('.mac-content').style.height = '580px';
+      photosWin.querySelector('.mac-content').innerHTML = buildPhotosHTML(ALBUMS);
       photosWin.addEventListener('close-window', () => { photosWin = null; });
       desktop.appendChild(photosWin);
     });
