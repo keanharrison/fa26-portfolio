@@ -1210,17 +1210,34 @@
         else resumeWin.style.zIndex = ++_zTop;
         return;
       }
-      resumeWin = MacWindow({ title: 'Resume', width: 760, noPadding: true });
+
+      const RESUME_W         = 740;
+      const TITLEBAR_H       = 28;
+      const TOOLBAR_H        = 29;  // resume-toolbar row
+      // Fill as much vertical space as possible: leave ~5% top + dock + small gap
+      const dr               = desktop.getBoundingClientRect();
+      const DOCK_RESERVE     = Math.round(dr.height * 0.14); // clears dock
+      const TOP_MARGIN       = Math.round(dr.height * 0.04);
+      const maxContentH      = dr.height - TOP_MARGIN - DOCK_RESERVE - TITLEBAR_H;
+      const CONTENT_H        = Math.min(880, Math.max(680, maxContentH));
+
+      resumeWin = MacWindow({ title: 'Resume', width: RESUME_W, noPadding: true });
       const content = resumeWin.querySelector('.mac-content');
-      content.style.height = '640px';
-      content.style.display = 'flex';
+      content.style.height        = CONTENT_H + 'px';
+      content.style.display       = 'flex';
       content.style.flexDirection = 'column';
       content.innerHTML = `
         <div class="resume-toolbar">
           <a href="assets/kean_resume.pdf" target="_blank" rel="noopener" class="resume-open-link">Open PDF ↗</a>
         </div>
-        <iframe src="assets/kean_resume.pdf" class="resume-iframe" title="Resume PDF"></iframe>
+        <iframe src="assets/kean_resume.pdf#toolbar=0" class="resume-iframe" title="Resume PDF"></iframe>
       `;
+
+      // Re-centre vertically for the actual tall window (MacWindow centres on 500px default)
+      const totalH = TITLEBAR_H + CONTENT_H;
+      resumeWin.style.left = Math.max(0, Math.round((dr.width - RESUME_W) / 2)) + 'px';
+      resumeWin.style.top  = Math.max(TOP_MARGIN, Math.round((dr.height - totalH) / 2)) + 'px';
+
       resumeWin.addEventListener('close-window', () => { resumeWin = null; });
       winOpen(resumeWin, desktop);
     }
