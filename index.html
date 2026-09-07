@@ -125,6 +125,23 @@
       flex-shrink: 0;
     }
 
+    /* Running-app indicator dot */
+    .dock-icon::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.82);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .dock-icon.is-running::after { opacity: 1; }
+
     /* ══════════════════════════════════════════
        MacWindow component
     ══════════════════════════════════════════ */
@@ -138,11 +155,23 @@
       background: rgba(246, 246, 246, 0.94);
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
-      border: 1px solid rgba(255, 255, 255, 0.55);
+      border: 0.5px solid rgba(0, 0, 0, 0.18);
       box-shadow:
         0 0 0 0.5px rgba(0, 0, 0, 0.22),
         0 8px 24px rgba(0, 0, 0, 0.28),
         0 28px 80px rgba(0, 0, 0, 0.42);
+      /* Open/close animation */
+      transition: opacity 0.13s ease, transform 0.13s ease;
+      transform-origin: center top;
+    }
+    .mac-window.win-opening {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    .mac-window.win-closing {
+      opacity: 0;
+      transform: scale(0.97);
+      pointer-events: none;
     }
 
     /* Title bar */
@@ -169,8 +198,8 @@
       z-index: 1;
     }
     .mac-btn {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       border: 0.5px solid rgba(0, 0, 0, 0.12);
       cursor: default;
@@ -219,7 +248,7 @@
       transform: translateX(-50%);
       font-size: 13px;
       font-weight: 500;
-      color: rgba(0, 0, 0, 0.68);
+      color: rgba(0, 0, 0, 0.82);
       letter-spacing: -0.01em;
       white-space: nowrap;
       pointer-events: none;
@@ -258,8 +287,7 @@
       text-align: center;
     }
     .desktop-icon:hover {
-      transform: translateY(-5px) scale(1.05);
-      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
     }
     .desktop-icon.is-dragging,
     .desktop-icon.is-dragging:hover {
@@ -291,10 +319,12 @@
       letter-spacing: 0.01em;
     }
 
-    .desktop-icon.selected .folder-wrap {
+    .desktop-icon.selected {
+      background: rgba(255, 255, 255, 0.18);
       border-radius: 10px;
-      outline: 2px solid rgba(255, 255, 255, 0.55);
-      outline-offset: 2px;
+    }
+    .desktop-icon.selected .folder-wrap {
+      /* no extra outline — the parent fill is the selection indicator */
     }
 
     /* ── Focus-visible styles ──────────────────────────────────
@@ -630,6 +660,9 @@
       .dock-icon:hover,
       .mac-btn,
       .mac-btn::before,
+      .mac-window,
+      .mac-window.win-opening,
+      .mac-window.win-closing,
       .notes-list-item,
       .photos-grid-item img,
       .photos-album-cover,
@@ -640,7 +673,6 @@
       }
       /* Suppress transform-based hover lift — keep cursor/opacity feedback */
       .desktop-icon:hover {
-        transform: none !important;
         filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)) !important;
       }
       .dock-icon:hover {
@@ -690,13 +722,31 @@
     // Click outside any open window (but not the dock) → close all windows
     desktop.addEventListener('mousedown', e => {
       if (!e.target.closest('.mac-window') && !e.target.closest('.dock')) {
-        document.querySelectorAll('.mac-window').forEach(w => {
-          w.dispatchEvent(new CustomEvent('close-window', { bubbles: false }));
-          w.remove();
-        });
+        // winClose dispatches 'close-window' immediately (clears state vars)
+        // and removes the element after the CSS transition.
+        document.querySelectorAll('.mac-window:not(.win-closing)').forEach(w => winClose(w));
         Object.keys(openWindows).forEach(k => delete openWindows[k]);
       }
     });
+
+    /** Animate a MacWindow open: append to DOM, then fade+scale in. */
+    function winOpen(win, parent) {
+      win.classList.add('win-opening');
+      parent.appendChild(win);
+      requestAnimationFrame(() => requestAnimationFrame(() => win.classList.remove('win-opening')));
+    }
+
+    /**
+     * Animate a MacWindow closed.
+     * Dispatches 'close-window' immediately so callers can null their reference
+     * right away, then removes the element after the CSS transition completes.
+     */
+    function winClose(win) {
+      win.dispatchEvent(new CustomEvent('close-window', { bubbles: false }));
+      win.classList.add('win-closing');
+      const ms = parseFloat(getComputedStyle(win).transitionDuration) * 1000 || 0;
+      setTimeout(() => win.remove(), ms);
+    }
 
     function MacWindow({ title = '', children = '', width = 620, noPadding = false } = {}) {
       const win = document.createElement('div');
@@ -738,10 +788,7 @@
       win.addEventListener('mousedown', () => { win.style.zIndex = ++_zTop; });
 
       // ── Red: close ──
-      btnRed.addEventListener('click', () => {
-        win.dispatchEvent(new CustomEvent('close-window', { bubbles: false }));
-        win.remove();
-      });
+      btnRed.addEventListener('click', () => winClose(win));
 
       // ── Yellow: minimize ──
       btnYellow.addEventListener('click', () => {
@@ -1119,7 +1166,7 @@
             const win = MacWindow({ title: name, children: buildWindowContent(id, exp) });
             openWindows[id] = win;
             win.addEventListener('close-window', () => delete openWindows[id]);
-            desktop.appendChild(win);
+            winOpen(win, desktop);
           }
         }
         lastClickTime = now;
@@ -1143,7 +1190,7 @@
           const win = MacWindow({ title: name, children: buildWindowContent(id, exp) });
           openWindows[id] = win;
           win.addEventListener('close-window', () => delete openWindows[id]);
-          desktop.appendChild(win);
+          winOpen(win, desktop);
         }
       });
 
@@ -1175,7 +1222,7 @@
         <iframe src="assets/kean_resume.pdf" class="resume-iframe" title="Resume PDF"></iframe>
       `;
       resumeWin.addEventListener('close-window', () => { resumeWin = null; });
-      desktop.appendChild(resumeWin);
+      winOpen(resumeWin, desktop);
     }
 
     const resumeFolder = DesktopItem({
@@ -1249,12 +1296,16 @@
 
     let notesWin = null;
 
-    document.getElementById('btn-notes').addEventListener('click', () => {
+    const btnNotes  = document.getElementById('btn-notes');
+    const btnPhotos = document.getElementById('btn-photos');
+
+    btnNotes.addEventListener('click', () => {
       if (notesWin) {
         if (notesWin._minimized) { notesWin.restore(); }
         else { notesWin.style.zIndex = ++_zTop; }
         return;
       }
+      btnNotes.classList.add('is-running');
       notesWin = MacWindow({ title: 'Notes', width: 700, noPadding: true });
       const notesMc = notesWin.querySelector('.mac-content');
       let _notesActiveId = NOTES[0].id;
@@ -1285,8 +1336,11 @@
       }
 
       renderNotes();
-      notesWin.addEventListener('close-window', () => { notesWin = null; });
-      desktop.appendChild(notesWin);
+      notesWin.addEventListener('close-window', () => {
+        notesWin = null;
+        btnNotes.classList.remove('is-running');
+      });
+      winOpen(notesWin, desktop);
     });
 
     // ══════════════════════════════════════════
@@ -1512,12 +1566,13 @@
 
     let photosWin = null;
 
-    document.getElementById('btn-photos').addEventListener('click', () => {
+    btnPhotos.addEventListener('click', () => {
       if (photosWin) {
         if (photosWin._minimized) { photosWin.restore(); }
         else { photosWin.style.zIndex = ++_zTop; }
         return;
       }
+      btnPhotos.classList.add('is-running');
       photosState.selectedPhotoId = null;
       photosState.savedScrollTop = 0;
       photosWin = MacWindow({ title: 'Photos', width: 860, noPadding: true });
@@ -1527,8 +1582,9 @@
       photosWin.addEventListener('close-window', () => {
         _cleanupPhotos();
         photosWin = null;
+        btnPhotos.classList.remove('is-running');
       });
-      desktop.appendChild(photosWin);
+      winOpen(photosWin, desktop);
     });
   </script>
 </html>
