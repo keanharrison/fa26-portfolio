@@ -394,105 +394,33 @@
       border-radius: 0 0 11px 11px;
       padding: 26px 28px 32px;
     }
-    .photos-section-heading {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1a1a1a;
-      letter-spacing: -0.02em;
-      margin-bottom: 18px;
-    }
-    .photos-albums {
-      display: flex;
-      gap: 22px;
-      flex-wrap: wrap;
-    }
-    .photos-album {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 7px;
-      cursor: pointer;
-    }
-    .photos-album-cover {
-      width: 158px;
-      height: 158px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #d8d8d8;
-      flex-shrink: 0;
-      transition: filter 0.15s ease, transform 0.15s ease;
-    }
-    .photos-album:hover .photos-album-cover {
-      filter: brightness(0.93);
-      transform: scale(1.01);
-    }
-    .photos-album-cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .photos-album-name {
-      font-size: 12.5px;
-      font-weight: 500;
-      color: #1a1a1a;
-      letter-spacing: -0.01em;
-    }
-    .photos-album-count {
-      font-size: 11.5px;
-      color: #999;
-      margin-top: -4px;
-    }
-
-    /* Album view — override base shell for flex column layout */
-    .photos-shell.photos-album-view {
+    /* ── Unified gallery shell ───────────────────────────────── */
+    .photos-gallery-shell {
       padding: 0;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      height: 580px;
+      border-radius: 0 0 11px 11px;
     }
-    .photos-album-header {
+    .photos-gallery-heading {
       flex-shrink: 0;
-      padding: 20px 28px 14px;
-    }
-    .photos-nav {
-      display: flex;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-    .photos-back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      background: none;
-      border: none;
-      padding: 4px 8px 4px 4px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      color: #0071e3;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      transition: background 0.12s ease;
-    }
-    .photos-back-btn:hover { background: rgba(0, 113, 227, 0.08); }
-    .photos-back-btn svg { flex-shrink: 0; }
-    .photos-album-view-title {
-      font-size: 22px;
+      padding: 18px 24px 12px;
+      font-size: 20px;
       font-weight: 700;
       color: #1a1a1a;
       letter-spacing: -0.02em;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    /* Scrollable body */
-    .photos-album-body {
+    .photos-gallery-body {
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 12px 28px 28px;
+      padding: 0 24px 24px;
     }
-    .photos-album-body::-webkit-scrollbar       { width: 7px; }
-    .photos-album-body::-webkit-scrollbar-track { background: transparent; }
-    .photos-album-body::-webkit-scrollbar-thumb {
+    .photos-gallery-body::-webkit-scrollbar       { width: 7px; }
+    .photos-gallery-body::-webkit-scrollbar-track { background: transparent; }
+    .photos-gallery-body::-webkit-scrollbar-thumb {
       background: rgba(0,0,0,0.15);
       border-radius: 4px;
     }
@@ -501,11 +429,11 @@
     .photos-grid {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
     }
     .photos-grid-row {
       display: flex;
-      gap: 4px;
+      gap: 5px;
       align-items: flex-start;
     }
     .photos-grid-item {
@@ -1152,88 +1080,31 @@
 
     /**
      * @typedef {{ id: string, src: string, alt: string, width?: number, height?: number }} Photo
-     * @typedef {{ id: string, title: string, cover: string|null, photos: Photo[] }} PhotoAlbum
+     * @typedef {{ id: string, src: string, alt: string, width: number, height: number }} Photo
      */
 
-    /** @type {PhotoAlbum[]} */
-    const ALBUMS = [
-      {
-        id: 'travel',
-        title: 'Travel',
-        cover: 'assets/photos/travel/macaw.jpg',
-        photos: [
-          { id: 't1', src: 'assets/photos/travel/macaw.jpg',          alt: 'Scarlet macaw perched on a rocky tree branch',          width: 886,  height: 886  },
-          { id: 't2', src: 'assets/photos/travel/la-street.jpg',       alt: 'Palm tree-lined street in Los Angeles',                  width: 768,  height: 1024 },
-          { id: 't3', src: 'assets/photos/travel/colonnade-night.jpg', alt: 'Flower-draped colonnade walkway lit up at night',        width: 951,  height: 1024 },
-          { id: 't4', src: 'assets/photos/travel/la-hike.jpg',         alt: 'Overlooking the Los Angeles skyline from a hiking trail', width: 1024, height: 909  },
-          { id: 't5', src: 'assets/photos/travel/jet-ski.jpg',         alt: 'Riding a jet ski across open turquoise water',           width: 768,  height: 1024 },
-          { id: 't6', src: 'assets/photos/travel/beach-cats.jpg',      alt: 'Two white cats resting on a car dashboard near the ocean',width: 768,  height: 1024 },
-          { id: 't7', src: 'assets/photos/travel/bay-area-view.png',  alt: 'Golden hour view over the Bay Area from the Berkeley Hills', width: 768,  height: 1024 },
-          { id: 't8', src: 'assets/photos/travel/mcintire-nz.png',    alt: 'McIntire School of Commerce group photo in New Zealand',      width: 1512, height: 2016 },
-        ],
-      },
-      {
-        id: 'hobbies',
-        title: 'Hobbies',
-        cover: 'assets/photos/hobbies/skydiving.jpg',
-        photos: [
-          { id: 'h1', src: 'assets/photos/hobbies/skydiving.jpg',    alt: 'Tandem skydive in freefall above patchwork farmland',  width: 1896, height: 1659 },
-          { id: 'h2', src: 'assets/photos/hobbies/chess-coffee.jpg', alt: 'Chess board and spiced latte on a wooden café table',  width: 1536, height: 2048 },
-          { id: 'h3', src: 'assets/photos/hobbies/coffee-shop.jpg',  alt: 'At a dimly lit coffee shop holding a latte',           width: 2172, height: 1447 },
-        ],
-      },
-      {
-        id: 'life',
-        title: 'Life',
-        cover: 'assets/photos/life/friends-night.jpg',
-        photos: [
-          { id: 'l1', src: 'assets/photos/life/friends-night.jpg',  alt: 'Group of friends at mini golf on a summer night',     width: 1024, height: 768  },
-          { id: 'l2', src: 'assets/photos/life/tsg-lecture.jpg',    alt: 'TSG strategy group presenting to a packed lecture hall',width: 750,  height: 360  },
-          { id: 'l3', src: 'assets/photos/life/uva-colonnade.jpg',  alt: 'UVA colonnade at golden hour',                        width: 886,  height: 886  },
-          { id: 'l4', src: 'assets/photos/life/booz-allen.jpg',     alt: 'Interns gathered in the Booz Allen Hamilton office',   width: 1024, height: 768  },
-          { id: 'l5', src: 'assets/photos/life/dinner-film.png',   alt: 'Smiling at dinner, shot on film',                      width: 1086, height: 724  },
-          { id: 'l6', src: 'assets/photos/life/knowledge-conf.png',alt: 'Knowledge conference panel at UVA Darden',              width: 360,  height: 480  },
-          { id: 'l7', src: 'assets/photos/life/walk-sunset.png',   alt: 'Two friends walking down a road at golden-hour sunset', width: 540,  height: 360  },
-          { id: 'l8', src: 'assets/photos/life/ocean-sunset.png',  alt: 'Two silhouettes standing at the ocean during sunset',   width: 738,  height: 360  },
-        ],
-      },
+    /** @type {Photo[]} — all photos in display order */
+    const PHOTOS = [
+      { id: 'p1',  src: 'assets/photos/travel/macaw.jpg',          alt: 'Scarlet macaw perched on a rocky tree branch',                    width: 886,  height: 886  },
+      { id: 'p2',  src: 'assets/photos/life/friends-night.jpg',    alt: 'Group of friends at mini golf on a summer night',                 width: 1024, height: 768  },
+      { id: 'p3',  src: 'assets/photos/hobbies/skydiving.jpg',     alt: 'Tandem skydive in freefall above patchwork farmland',             width: 1896, height: 1659 },
+      { id: 'p4',  src: 'assets/photos/life/dinner-film.png',      alt: 'Smiling at dinner, shot on film',                                 width: 1086, height: 724  },
+      { id: 'p5',  src: 'assets/photos/travel/la-street.jpg',      alt: 'Palm tree-lined street in Los Angeles',                           width: 768,  height: 1024 },
+      { id: 'p6',  src: 'assets/photos/travel/bay-area-view.png',  alt: 'Golden hour view over the Bay Area from the Berkeley Hills',      width: 768,  height: 1024 },
+      { id: 'p7',  src: 'assets/photos/life/booz-allen.jpg',       alt: 'Interns gathered in the Booz Allen Hamilton office',              width: 1024, height: 768  },
+      { id: 'p8',  src: 'assets/photos/travel/colonnade-night.jpg',alt: 'Flower-draped colonnade walkway lit up at night',                 width: 951,  height: 1024 },
+      { id: 'p9',  src: 'assets/photos/life/uva-colonnade.jpg',    alt: 'UVA colonnade at golden hour',                                    width: 886,  height: 886  },
+      { id: 'p10', src: 'assets/photos/hobbies/coffee-shop.jpg',   alt: 'At a dimly lit coffee shop holding a latte',                      width: 2172, height: 1447 },
+      { id: 'p11', src: 'assets/photos/travel/la-hike.jpg',        alt: 'Overlooking the Los Angeles skyline from a hiking trail',         width: 1024, height: 909  },
+      { id: 'p12', src: 'assets/photos/hobbies/chess-coffee.jpg',  alt: 'Chess board and spiced latte on a wooden café table',             width: 1536, height: 2048 },
+      { id: 'p13', src: 'assets/photos/life/walk-sunset.png',      alt: 'Two friends walking down a road at golden-hour sunset',           width: 540,  height: 360  },
+      { id: 'p14', src: 'assets/photos/life/ocean-sunset.png',     alt: 'Two silhouettes standing at the ocean during sunset',             width: 738,  height: 360  },
+      { id: 'p15', src: 'assets/photos/travel/jet-ski.jpg',        alt: 'Riding a jet ski across open turquoise water',                    width: 768,  height: 1024 },
+      { id: 'p16', src: 'assets/photos/life/tsg-lecture.jpg',      alt: 'TSG strategy group presenting to a packed lecture hall',          width: 750,  height: 360  },
+      { id: 'p17', src: 'assets/photos/travel/beach-cats.jpg',     alt: 'Two white cats resting on a car dashboard near the ocean',        width: 768,  height: 1024 },
+      { id: 'p18', src: 'assets/photos/life/knowledge-conf.png',   alt: 'Knowledge conference panel at UVA Darden',                        width: 360,  height: 480  },
+      { id: 'p19', src: 'assets/photos/travel/mcintire-nz.png',    alt: 'McIntire School of Commerce group photo in New Zealand',          width: 1512, height: 2016 },
     ];
-
-    /**
-     * Renders one album tile.
-     * To add a new album: push a new object into ALBUMS — no other changes needed.
-     * To set a cover: set album.cover to an image path.
-     * To add photos: push Photo objects into album.photos.
-     * @param {PhotoAlbum} album
-     * @returns {string} HTML string
-     */
-    function AlbumTile(album) {
-      const coverHTML = album.cover
-        ? `<img src="${album.cover}" alt="${album.title}" />`
-        : ''; // neutral gray #d8d8d8 from .photos-album-cover CSS
-      const countHTML = album.photos.length > 0
-        ? `<div class="photos-album-count">${album.photos.length} photo${album.photos.length !== 1 ? 's' : ''}</div>`
-        : '';
-      return `
-        <div class="photos-album" data-album-id="${album.id}">
-          <div class="photos-album-cover">${coverHTML}</div>
-          <div class="photos-album-name">${album.title}</div>
-          ${countHTML}
-        </div>`;
-    }
-
-    /**
-     * Renders the Photos landing screen from the albums array.
-     * @param {PhotoAlbum[]} albums
-     * @returns {string} HTML string
-     */
-    function buildPhotosLanding(albums) {
-      return `
-        <div class="photos-shell">
-          <div class="photos-section-heading">Albums</div>
-          <div class="photos-albums">${albums.map(AlbumTile).join('')}</div>
-        </div>`;
-    }
 
     /**
      * Justified-row photo grid.
@@ -1246,7 +1117,7 @@
     function PhotoGrid(photos, containerWidth) {
       if (!photos.length) return '<div class="photos-empty">No Photos</div>';
 
-      const GAP    = 4;
+      const GAP    = 5;
       const TARGET = 160; // target row height in px
 
       // Build justified rows
@@ -1281,24 +1152,14 @@
     }
 
     /**
-     * Renders the album detail view shell.
-     * The grid is inserted separately after DOM measurement.
-     * @param {PhotoAlbum} album
+     * Renders the unified gallery shell.
      * @returns {string} HTML string
      */
-    function buildAlbumView(album) {
-      const chevron = `<svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.5 1.5L1.5 6.5L6.5 11.5" stroke="#0071e3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`;
+    function buildGalleryShell() {
       return `
-        <div class="photos-shell photos-album-view">
-          <div class="photos-album-header">
-            <div class="photos-nav">
-              <button class="photos-back-btn" id="photos-back">${chevron} Albums</button>
-            </div>
-            <div class="photos-album-view-title">${album.title}</div>
-          </div>
-          <div class="photos-album-body" id="photos-body"></div>
+        <div class="photos-gallery-shell">
+          <div class="photos-gallery-heading">Photos</div>
+          <div class="photos-gallery-body" id="photos-body"></div>
         </div>`;
     }
 
@@ -1309,12 +1170,10 @@
 
     /**
      * Navigation state:
-     *   selectedAlbumId === null                          → landing screen
-     *   selectedAlbumId set, selectedPhotoId === null     → album grid
-     *   both set                                          → photo viewer
+     *   selectedPhotoId === null  → gallery grid
+     *   selectedPhotoId set       → photo viewer
      */
     const photosState = {
-      selectedAlbumId: null,
       selectedPhotoId: null,
       savedScrollTop: 0,
     };
@@ -1322,10 +1181,9 @@
     /**
      * Full-screen photo viewer component.
      * @param {Photo} photo
-     * @param {PhotoAlbum} album
      * @returns {string} HTML string
      */
-    function PhotoViewer(photo, album) {
+    function PhotoViewer(photo) {
       const backChevron = `<svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M6.5 1.5L1.5 6.5L6.5 11.5" stroke="rgba(255,255,255,0.82)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;
@@ -1338,7 +1196,7 @@
       return `
         <div class="photos-viewer">
           <div class="photos-viewer-header">
-            <button class="photos-viewer-back" id="photos-viewer-back">${backChevron} ${album.title}</button>
+            <button class="photos-viewer-back" id="photos-viewer-back">${backChevron} Photos</button>
           </div>
           <div class="photos-viewer-stage">
             <button class="photos-nav-btn photos-prev-btn" id="photos-prev" aria-label="Previous photo">${leftArrow}</button>
@@ -1359,37 +1217,16 @@
     function renderPhotos(content) {
       _cleanupPhotos();
 
-      if (photosState.selectedAlbumId === null) {
-        // ── Landing screen ─────────────────────────────────────
-        content.innerHTML = buildPhotosLanding(ALBUMS);
-        content.querySelectorAll('.photos-album').forEach(el => {
-          el.addEventListener('click', () => {
-            photosState.selectedAlbumId = el.dataset.albumId;
-            photosState.selectedPhotoId = null;
-            photosState.savedScrollTop = 0;
-            renderPhotos(content);
-          });
-        });
-
-      } else if (photosState.selectedPhotoId === null) {
-        // ── Album grid ──────────────────────────────────────────
-        const album = ALBUMS.find(a => a.id === photosState.selectedAlbumId);
-        content.innerHTML = buildAlbumView(album);
-
-        content.querySelector('#photos-back').addEventListener('click', () => {
-          photosState.selectedAlbumId = null;
-          renderPhotos(content);
-        });
-
+      if (photosState.selectedPhotoId === null) {
+        // ── Unified gallery ────────────────────────────────────
+        content.innerHTML = buildGalleryShell();
         const body = content.querySelector('#photos-body');
 
         function renderGrid() {
           const w = body.clientWidth;
           if (w <= 0) return;
-          body.innerHTML = PhotoGrid(album.photos, w);
-          // Restore scroll position when returning from viewer
+          body.innerHTML = PhotoGrid(PHOTOS, w);
           body.scrollTop = photosState.savedScrollTop;
-          // Wire individual photo clicks
           body.querySelectorAll('.photos-grid-item').forEach(el => {
             el.addEventListener('click', () => {
               photosState.savedScrollTop = body.scrollTop;
@@ -1404,49 +1241,44 @@
         _photosRO.observe(body);
 
       } else {
-        // ── Photo viewer ────────────────────────────────────────
-        const album = ALBUMS.find(a => a.id === photosState.selectedAlbumId);
-        const photoIdx = album.photos.findIndex(p => p.id === photosState.selectedPhotoId);
-        const photo = album.photos[photoIdx];
+        // ── Photo viewer ───────────────────────────────────────
+        const photoIdx = PHOTOS.findIndex(p => p.id === photosState.selectedPhotoId);
+        const photo = PHOTOS[photoIdx];
 
-        content.innerHTML = PhotoViewer(photo, album);
+        content.innerHTML = PhotoViewer(photo);
 
-        // Back to grid
         content.querySelector('#photos-viewer-back').addEventListener('click', () => {
           photosState.selectedPhotoId = null;
           renderPhotos(content);
         });
 
-        // Previous button
         const prevBtn = content.querySelector('#photos-prev');
         if (photoIdx === 0) prevBtn.disabled = true;
         prevBtn.addEventListener('click', () => {
           if (photoIdx > 0) {
-            photosState.selectedPhotoId = album.photos[photoIdx - 1].id;
+            photosState.selectedPhotoId = PHOTOS[photoIdx - 1].id;
             renderPhotos(content);
           }
         });
 
-        // Next button
         const nextBtn = content.querySelector('#photos-next');
-        if (photoIdx === album.photos.length - 1) nextBtn.disabled = true;
+        if (photoIdx === PHOTOS.length - 1) nextBtn.disabled = true;
         nextBtn.addEventListener('click', () => {
-          if (photoIdx < album.photos.length - 1) {
-            photosState.selectedPhotoId = album.photos[photoIdx + 1].id;
+          if (photoIdx < PHOTOS.length - 1) {
+            photosState.selectedPhotoId = PHOTOS[photoIdx + 1].id;
             renderPhotos(content);
           }
         });
 
-        // Keyboard shortcuts (only while viewer is active)
         _photosKeyHandler = (e) => {
           if (e.key === 'Escape') {
             photosState.selectedPhotoId = null;
             renderPhotos(content);
           } else if (e.key === 'ArrowLeft' && photoIdx > 0) {
-            photosState.selectedPhotoId = album.photos[photoIdx - 1].id;
+            photosState.selectedPhotoId = PHOTOS[photoIdx - 1].id;
             renderPhotos(content);
-          } else if (e.key === 'ArrowRight' && photoIdx < album.photos.length - 1) {
-            photosState.selectedPhotoId = album.photos[photoIdx + 1].id;
+          } else if (e.key === 'ArrowRight' && photoIdx < PHOTOS.length - 1) {
+            photosState.selectedPhotoId = PHOTOS[photoIdx + 1].id;
             renderPhotos(content);
           }
         };
@@ -1462,7 +1294,6 @@
         else { photosWin.style.zIndex = ++_zTop; }
         return;
       }
-      photosState.selectedAlbumId = null;
       photosState.selectedPhotoId = null;
       photosState.savedScrollTop = 0;
       photosWin = MacWindow({ title: 'Photos', width: 860, noPadding: true });
