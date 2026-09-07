@@ -1157,9 +1157,40 @@
 
     /** @type {PhotoAlbum[]} */
     const ALBUMS = [
-      { id: 'travel',  title: 'Travel',  cover: null, photos: [] },
-      { id: 'hobbies', title: 'Hobbies', cover: null, photos: [] },
-      { id: 'life',    title: 'Life',    cover: null, photos: [] },
+      {
+        id: 'travel',
+        title: 'Travel',
+        cover: 'assets/photos/travel/macaw.jpg',
+        photos: [
+          { id: 't1', src: 'assets/photos/travel/macaw.jpg',          alt: 'Scarlet macaw perched on a rocky tree branch',          width: 886,  height: 886  },
+          { id: 't2', src: 'assets/photos/travel/la-street.jpg',       alt: 'Palm tree-lined street in Los Angeles',                  width: 768,  height: 1024 },
+          { id: 't3', src: 'assets/photos/travel/colonnade-night.jpg', alt: 'Flower-draped colonnade walkway lit up at night',        width: 951,  height: 1024 },
+          { id: 't4', src: 'assets/photos/travel/la-hike.jpg',         alt: 'Overlooking the Los Angeles skyline from a hiking trail', width: 1024, height: 909  },
+          { id: 't5', src: 'assets/photos/travel/jet-ski.jpg',         alt: 'Riding a jet ski across open turquoise water',           width: 768,  height: 1024 },
+          { id: 't6', src: 'assets/photos/travel/beach-cats.jpg',      alt: 'Two white cats resting on a car dashboard near the ocean',width: 768,  height: 1024 },
+        ],
+      },
+      {
+        id: 'hobbies',
+        title: 'Hobbies',
+        cover: 'assets/photos/hobbies/skydiving.jpg',
+        photos: [
+          { id: 'h1', src: 'assets/photos/hobbies/skydiving.jpg',    alt: 'Tandem skydive in freefall above patchwork farmland',  width: 1896, height: 1659 },
+          { id: 'h2', src: 'assets/photos/hobbies/chess-coffee.jpg', alt: 'Chess board and spiced latte on a wooden café table',  width: 1536, height: 2048 },
+          { id: 'h3', src: 'assets/photos/hobbies/coffee-shop.jpg',  alt: 'At a dimly lit coffee shop holding a latte',           width: 2172, height: 1447 },
+        ],
+      },
+      {
+        id: 'life',
+        title: 'Life',
+        cover: 'assets/photos/life/friends-night.jpg',
+        photos: [
+          { id: 'l1', src: 'assets/photos/life/friends-night.jpg',  alt: 'Group of friends at mini golf on a summer night',     width: 1024, height: 768  },
+          { id: 'l2', src: 'assets/photos/life/tsg-lecture.jpg',    alt: 'TSG strategy group presenting to a packed lecture hall',width: 750,  height: 360  },
+          { id: 'l3', src: 'assets/photos/life/uva-colonnade.jpg',  alt: 'UVA colonnade at golden hour',                        width: 886,  height: 886  },
+          { id: 'l4', src: 'assets/photos/life/booz-allen.jpg',     alt: 'Interns gathered in the Booz Allen Hamilton office',   width: 1024, height: 768  },
+        ],
+      },
     ];
 
     /**
