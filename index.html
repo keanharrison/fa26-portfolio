@@ -1226,15 +1226,15 @@
         return;
       }
 
-      const RESUME_W         = 740;
-      const TITLEBAR_H       = 28;
-      const TOOLBAR_H        = 29;  // resume-toolbar row
-      // Fill as much vertical space as possible: leave ~5% top + dock + small gap
-      const dr               = desktop.getBoundingClientRect();
-      const DOCK_RESERVE     = Math.round(dr.height * 0.14); // clears dock
-      const TOP_MARGIN       = Math.round(dr.height * 0.04);
-      const maxContentH      = dr.height - TOP_MARGIN - DOCK_RESERVE - TITLEBAR_H;
-      const CONTENT_H        = Math.min(880, Math.max(680, maxContentH));
+      const dr          = desktop.getBoundingClientRect();
+      const TITLEBAR_H  = 28;
+      const TOP_MARGIN  = Math.max(16, Math.round(dr.height * 0.04));
+      const DOCK_CLEAR  = Math.round(dr.height * 0.18); // dock height + gap
+
+      // Width: fill 86% of desktop, capped at 720px
+      const RESUME_W  = Math.min(720, Math.max(360, Math.round(dr.width * 0.86)));
+      // Height: fill all available vertical space — no artificial floor
+      const CONTENT_H = Math.max(260, dr.height - TOP_MARGIN - DOCK_CLEAR - TITLEBAR_H);
 
       resumeWin = MacWindow({ title: 'Resume', width: RESUME_W, noPadding: true });
       const content = resumeWin.querySelector('.mac-content');
@@ -1248,10 +1248,9 @@
         <iframe src="assets/kean_resume.pdf#toolbar=0" class="resume-iframe" title="Resume PDF"></iframe>
       `;
 
-      // Re-centre vertically for the actual tall window (MacWindow centres on 500px default)
-      const totalH = TITLEBAR_H + CONTENT_H;
-      resumeWin.style.left = Math.max(0, Math.round((dr.width - RESUME_W) / 2)) + 'px';
-      resumeWin.style.top  = Math.max(TOP_MARGIN, Math.round((dr.height - totalH) / 2)) + 'px';
+      // Pin to top margin, centre horizontally
+      resumeWin.style.left = Math.max(0, Math.round((dr.width  - RESUME_W)  / 2)) + 'px';
+      resumeWin.style.top  = TOP_MARGIN + 'px';
 
       resumeWin.addEventListener('close-window', () => { resumeWin = null; });
       winOpen(resumeWin, desktop);
