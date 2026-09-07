@@ -250,6 +250,12 @@
       user-select: none;
       transition: transform 0.2s ease, filter 0.2s ease;
       z-index: 5;
+      /* Reset <button> styles */
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      text-align: center;
     }
     .desktop-icon:hover {
       transform: translateY(-5px) scale(1.05);
@@ -290,6 +296,54 @@
       outline-offset: 2px;
     }
 
+    /* ── Focus-visible styles ──────────────────────────────────
+       Dark desktop / dock: white ring
+       Light windows:       Apple-blue ring
+       Never show for mouse clicks (focus-visible only)
+    ───────────────────────────────────────────────────────── */
+
+    /* Dock icons and desktop folders live on dark background */
+    .dock-icon:focus-visible,
+    .desktop-icon:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.82);
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
+    /* Desktop folder: draw ring around folder image, not whole button */
+    .desktop-icon:focus-visible .folder-wrap {
+      border-radius: 10px;
+      outline: 2px solid rgba(255, 255, 255, 0.82);
+      outline-offset: 2px;
+    }
+    .desktop-icon:focus-visible {
+      outline: none; /* ring is on .folder-wrap */
+    }
+
+    /* Interactive elements inside light-background windows */
+    .mac-btn:focus-visible,
+    .notes-list-item:focus-visible,
+    .photos-grid-item:focus-visible,
+    .photos-viewer-back:focus-visible,
+    .photos-nav-btn:focus-visible,
+    .photos-back-btn:focus-visible {
+      outline: 2px solid #0071e3;
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* Traffic light buttons: tighter radius to match their circular shape */
+    .mac-btn:focus-visible {
+      border-radius: 50%;
+      outline-offset: 1px;
+    }
+
+    /* Photos grid items: outline follows the image cell */
+    .photos-grid-item:focus-visible {
+      border-radius: 0;
+      z-index: 1;
+    }
+
     /* ══════════════════════════════════════════
        Notes app inner layout
     ══════════════════════════════════════════ */
@@ -320,6 +374,13 @@
       cursor: pointer;
       transition: background 0.1s ease;
       margin-bottom: 2px;
+      /* Reset <button> */
+      background: none;
+      border: none;
+      width: calc(100% - 0px);
+      text-align: left;
+      font: inherit;
+      display: block;
     }
     .notes-list-item:hover:not(.notes-list-selected) {
       background: rgba(0,0,0,0.05);
@@ -337,12 +398,12 @@
     }
     .notes-list-meta {
       font-size: 11px;
-      color: #999;
+      color: #6e6e73;
       margin-top: 2px;
     }
     .notes-list-preview {
       font-size: 11px;
-      color: #b0b0b0;
+      color: #8e8e93;
       margin-top: 2px;
       white-space: nowrap;
       overflow: hidden;
@@ -360,7 +421,7 @@
     }
     .notes-date {
       font-size: 11px;
-      color: #b0b0b0;
+      color: #6e6e73;
       text-align: center;
       padding: 16px 24px 10px;
       letter-spacing: 0.01em;
@@ -441,6 +502,10 @@
       flex-shrink: 0;
       background: #d8d8d8;
       cursor: pointer;
+      /* Reset <button> */
+      border: none;
+      padding: 0;
+      display: block;
     }
     .photos-grid-item img {
       width: 100%;
@@ -452,7 +517,7 @@
     .photos-grid-item:hover img { filter: brightness(0.88); cursor: pointer; }
     .photos-empty {
       font-size: 13px;
-      color: #aaa;
+      color: #6e6e73;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       padding-top: 8px;
     }
@@ -525,6 +590,36 @@
     .photos-nav-btn:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
     .photos-prev-btn { left: 12px; }
     .photos-next-btn { right: 12px; }
+
+    /* ── Reduced motion ─────────────────────────────────────────
+       Disable all non-essential transitions and transform-based
+       hover motion for users who have requested reduced motion.
+    ─────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .desktop-icon,
+      .desktop-icon:hover,
+      .desktop-icon.is-dragging,
+      .dock-icon,
+      .dock-icon:hover,
+      .mac-btn,
+      .mac-btn::before,
+      .notes-list-item,
+      .photos-grid-item img,
+      .photos-album-cover,
+      .photos-viewer-back,
+      .photos-nav-btn {
+        transition: none !important;
+        animation: none !important;
+      }
+      /* Suppress transform-based hover lift — keep cursor/opacity feedback */
+      .desktop-icon:hover {
+        transform: none !important;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)) !important;
+      }
+      .dock-icon:hover {
+        transform: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -536,23 +631,23 @@
 
     <!-- Dock -->
     <div class="dock">
-      <button class="dock-icon" id="btn-notes" title="Notes">
-        <img src="assets/icons/notes.png" alt="Notes" />
+      <button class="dock-icon" id="btn-notes" title="Notes" aria-label="Open Notes">
+        <img src="assets/icons/notes.png" alt="" aria-hidden="true" />
       </button>
-      <a class="dock-icon" href="https://github.com/keanharrison" target="_blank" rel="noopener" title="GitHub">
-        <img src="assets/icons/github.png" alt="GitHub" />
+      <a class="dock-icon" href="https://github.com/keanharrison" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub (opens in new tab)">
+        <img src="assets/icons/github.png" alt="" aria-hidden="true" />
       </a>
-      <a class="dock-icon" href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener" title="LinkedIn">
-        <img src="assets/icons/linkedin.png" alt="LinkedIn" />
+      <a class="dock-icon" href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn (opens in new tab)">
+        <img src="assets/icons/linkedin.png" alt="" aria-hidden="true" />
       </a>
-      <a class="dock-icon" href="https://www.instagram.com/keanharrison/" target="_blank" rel="noopener" title="Instagram">
-        <img src="assets/icons/instagram.png" alt="Instagram" />
+      <a class="dock-icon" href="https://www.instagram.com/keanharrison/" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram (opens in new tab)">
+        <img src="assets/icons/instagram.png" alt="" aria-hidden="true" />
       </a>
-      <button class="dock-icon" id="btn-photos" title="Photos">
-        <img src="assets/icons/photos.png" alt="Photos" />
+      <button class="dock-icon" id="btn-photos" title="Photos" aria-label="Open Photos">
+        <img src="assets/icons/photos.png" alt="" aria-hidden="true" />
       </button>
-      <a class="dock-icon" href="https://x.com/keanharr?s=11" target="_blank" rel="noopener" title="X">
-        <img src="assets/icons/x.png" alt="X" />
+      <a class="dock-icon" href="https://x.com/keanharr?s=11" target="_blank" rel="noopener" title="X" aria-label="X / Twitter (opens in new tab)">
+        <img src="assets/icons/x.png" alt="" aria-hidden="true" />
       </a>
     </div>
 
@@ -591,9 +686,9 @@
       win.innerHTML = `
         <div class="mac-titlebar">
           <div class="mac-controls">
-            <button class="mac-btn mac-btn-red"    aria-label="Close"></button>
-            <button class="mac-btn mac-btn-yellow" aria-label="Minimize"></button>
-            <button class="mac-btn mac-btn-green"  aria-label="Maximize"></button>
+            <button class="mac-btn mac-btn-red"    aria-label="Close ${title}"></button>
+            <button class="mac-btn mac-btn-yellow" aria-label="Minimize ${title}"></button>
+            <button class="mac-btn mac-btn-green"  aria-label="Maximize ${title}"></button>
           </div>
           <span class="mac-title">${title}</span>
         </div>
@@ -864,7 +959,7 @@
           <div>
             <div style="font-size:16px;font-weight:600;color:#1a1a1a;letter-spacing:-0.02em;line-height:1.2;">${company}</div>
             <div style="font-size:13px;font-weight:500;color:#444;margin-top:3px;">${role}</div>
-            <div style="font-size:11px;color:#888;margin-top:2px;letter-spacing:0.01em;">${period}</div>
+            <div style="font-size:11px;color:#6e6e73;margin-top:2px;letter-spacing:0.01em;">${period}</div>
           </div>
         </div>
         <ul style="padding-left:18px;display:flex;flex-direction:column;gap:9px;margin-bottom:22px;">
@@ -872,7 +967,7 @@
         </ul>
         ${skills ? `
         <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:16px;margin-bottom:${links.length ? '16px' : '0'};">
-          <div style="font-size:10px;font-weight:600;color:#999;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Skills</div>
+          <div style="font-size:10px;font-weight:600;color:#6e6e73;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Skills</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;">${skills}</div>
         </div>` : ''}
         ${links.length ? `
@@ -903,16 +998,17 @@
 
     function DesktopItem(exp) {
       const { id, name, folderIcon, left, top } = exp;
-      const el = document.createElement('div');
+      const el = document.createElement('button');
       el.className = 'desktop-icon';
       el.dataset.id = id;
       el.style.left = left;
       el.style.top  = top;
+      el.setAttribute('aria-label', name);
       el.innerHTML = `
         <div class="folder-wrap">
-          <img class="folder-base" src="${folderIcon}" alt="" />
+          <img class="folder-base" src="${folderIcon}" alt="" aria-hidden="true" />
         </div>
-        <span class="icon-label">${name}</span>
+        <span class="icon-label" aria-hidden="true">${name}</span>
       `;
 
       // ── Drag logic ──
@@ -997,6 +1093,26 @@
         lastClickTime = now;
       });
 
+      // ── Keyboard: Enter/Space opens folder (Space prevented from scrolling) ──
+      el.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault(); // prevent page scroll on Space
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        if (openWindows[id]) {
+          if (openWindows[id]._minimized) {
+            openWindows[id].restore();
+          } else {
+            openWindows[id].style.zIndex = ++_zTop;
+          }
+        } else {
+          const win = MacWindow({ title: name, children: buildWindowContent(id, exp) });
+          openWindows[id] = win;
+          win.addEventListener('close-window', () => delete openWindows[id]);
+          desktop.appendChild(win);
+        }
+      });
+
       return el;
     }
 
@@ -1036,11 +1152,11 @@
     function buildNotesHTML(notes, activeId) {
       const active = notes.find(n => n.id === activeId) || notes[0];
       const listItems = notes.map(n => `
-        <div class="notes-list-item${n.id === active.id ? ' notes-list-selected' : ''}" data-note-id="${n.id}">
+        <button class="notes-list-item${n.id === active.id ? ' notes-list-selected' : ''}" data-note-id="${n.id}" aria-label="${n.title}" aria-pressed="${n.id === active.id}">
           <div class="notes-list-title">${n.title}</div>
           <div class="notes-list-meta">${fmtShort(n.createdAt)}</div>
           <div class="notes-list-preview">${fmtPreview(n)}</div>
-        </div>`).join('');
+        </button>`).join('');
 
       const bodyHTML = Array.isArray(active.content)
         ? active.content.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')
@@ -1069,7 +1185,35 @@
         return;
       }
       notesWin = MacWindow({ title: 'Notes', width: 700, noPadding: true });
-      notesWin.querySelector('.mac-content').innerHTML = buildNotesHTML(NOTES, NOTES[0].id);
+      const notesMc = notesWin.querySelector('.mac-content');
+      let _notesActiveId = NOTES[0].id;
+
+      function renderNotes() {
+        notesMc.innerHTML = buildNotesHTML(NOTES, _notesActiveId);
+        const items = notesMc.querySelectorAll('.notes-list-item');
+        items.forEach(item => {
+          // Click to select
+          item.addEventListener('click', () => {
+            _notesActiveId = item.dataset.noteId;
+            renderNotes();
+            item.focus();
+          });
+          // ArrowUp / ArrowDown navigation between list items
+          item.addEventListener('keydown', e => {
+            const allItems = [...notesMc.querySelectorAll('.notes-list-item')];
+            const idx = allItems.indexOf(item);
+            if (e.key === 'ArrowDown' && idx < allItems.length - 1) {
+              e.preventDefault();
+              allItems[idx + 1].focus();
+            } else if (e.key === 'ArrowUp' && idx > 0) {
+              e.preventDefault();
+              allItems[idx - 1].focus();
+            }
+          });
+        });
+      }
+
+      renderNotes();
       notesWin.addEventListener('close-window', () => { notesWin = null; });
       desktop.appendChild(notesWin);
     });
@@ -1141,9 +1285,9 @@
         const style = last ? 'justify-content:flex-start' : '';
         const cells = items.map(({ photo, ar }) => {
           const w = Math.round(ar * height);
-          return `<div class="photos-grid-item" style="width:${w}px;height:${height}px;" data-photo-id="${photo.id}">
-            <img src="${photo.src}" alt="${photo.alt}" loading="lazy" />
-          </div>`;
+          return `<button class="photos-grid-item" style="width:${w}px;height:${height}px;" data-photo-id="${photo.id}" aria-label="${photo.alt}">
+            <img src="${photo.src}" alt="" loading="lazy" aria-hidden="true" />
+          </button>`;
         }).join('');
         return `<div class="photos-grid-row" style="${style}">${cells}</div>`;
       }).join('');
@@ -1271,13 +1415,20 @@
         });
 
         _photosKeyHandler = (e) => {
+          // Only handle keys when Photos window is frontmost and no other input is focused
+          if (!photosWin || document.activeElement instanceof HTMLInputElement
+              || document.activeElement instanceof HTMLTextAreaElement) return;
+          if (parseInt(photosWin.style.zIndex || '0') < _zTop) return;
           if (e.key === 'Escape') {
+            e.preventDefault();
             photosState.selectedPhotoId = null;
             renderPhotos(content);
           } else if (e.key === 'ArrowLeft' && photoIdx > 0) {
+            e.preventDefault();
             photosState.selectedPhotoId = PHOTOS[photoIdx - 1].id;
             renderPhotos(content);
           } else if (e.key === 'ArrowRight' && photoIdx < PHOTOS.length - 1) {
+            e.preventDefault();
             photosState.selectedPhotoId = PHOTOS[photoIdx + 1].id;
             renderPhotos(content);
           }
