@@ -524,6 +524,31 @@
       padding-top: 8px;
     }
 
+    /* ── Resume window ────────────────────────────────────────── */
+    .resume-toolbar {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 5px 14px;
+      background: rgba(240, 240, 240, 0.95);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+    }
+    .resume-open-link {
+      font-size: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #007AFF;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .resume-open-link:hover { text-decoration: underline; }
+    .resume-iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+      display: block;
+    }
+
     /* ── Photo Viewer ─────────────────────────────────────────── */
     .photos-viewer {
       display: flex;
@@ -1001,16 +1026,17 @@
     // ══════════════════════════════════════════
 
     function DesktopItem(exp) {
-      const { id, name, folderIcon, left, top } = exp;
+      const { id, name, folderIcon, left, top, colorFilter = '', onOpen = null } = exp;
       const el = document.createElement('button');
       el.className = 'desktop-icon';
       el.dataset.id = id;
       el.style.left = left;
       el.style.top  = top;
       el.setAttribute('aria-label', name);
+      const imgStyle = colorFilter ? ` style="filter:${colorFilter}"` : '';
       el.innerHTML = `
         <div class="folder-wrap">
-          <img class="folder-base" src="${folderIcon}" alt="" aria-hidden="true" />
+          <img class="folder-base" src="${folderIcon}" alt="" aria-hidden="true"${imgStyle} />
         </div>
         <span class="icon-label" aria-hidden="true">${name}</span>
       `;
@@ -1081,7 +1107,9 @@
         // Double-click detection
         const now = Date.now();
         if (now - lastClickTime < 400) {
-          if (openWindows[id]) {
+          if (onOpen) {
+            onOpen();
+          } else if (openWindows[id]) {
             if (openWindows[id]._minimized) {
               openWindows[id].restore();
             } else {
@@ -1103,7 +1131,9 @@
         e.preventDefault(); // prevent page scroll on Space
         document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
         el.classList.add('selected');
-        if (openWindows[id]) {
+        if (onOpen) {
+          onOpen();
+        } else if (openWindows[id]) {
           if (openWindows[id]._minimized) {
             openWindows[id].restore();
           } else {
@@ -1121,6 +1151,43 @@
     }
 
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
+
+    // ══════════════════════════════════════════
+    // Resume folder + window
+    // ══════════════════════════════════════════
+    let resumeWin = null;
+
+    function openResume() {
+      if (resumeWin) {
+        if (resumeWin._minimized) resumeWin.restore();
+        else resumeWin.style.zIndex = ++_zTop;
+        return;
+      }
+      resumeWin = MacWindow({ title: 'Resume', width: 760, noPadding: true });
+      const content = resumeWin.querySelector('.mac-content');
+      content.style.height = '640px';
+      content.style.display = 'flex';
+      content.style.flexDirection = 'column';
+      content.innerHTML = `
+        <div class="resume-toolbar">
+          <a href="assets/kean_resume.pdf" target="_blank" rel="noopener" class="resume-open-link">Open PDF ↗</a>
+        </div>
+        <iframe src="assets/kean_resume.pdf" class="resume-iframe" title="Resume PDF"></iframe>
+      `;
+      resumeWin.addEventListener('close-window', () => { resumeWin = null; });
+      desktop.appendChild(resumeWin);
+    }
+
+    const resumeFolder = DesktopItem({
+      id: 'resume',
+      name: 'Resume',
+      folderIcon: 'assets/icons/folder.png',
+      colorFilter: 'hue-rotate(140deg) saturate(1.15)',
+      left: '43%',
+      top: '20%',
+      onOpen: openResume,
+    });
+    desktop.insertBefore(resumeFolder, desktop.querySelector('.dock'));
 
     // ══════════════════════════════════════════
     // Notes app
