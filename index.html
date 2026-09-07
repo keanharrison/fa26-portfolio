@@ -266,6 +266,7 @@
       transform: none;
       filter: drop-shadow(0 10px 20px rgba(0,0,0,0.45));
       cursor: grabbing;
+      will-change: left, top;
     }
 
     .folder-wrap {
@@ -764,6 +765,7 @@
         const startL  = parseFloat(win.style.left) || 0;
         const startT  = parseFloat(win.style.top)  || 0;
         win.style.zIndex = ++_zTop;
+        win.style.willChange = 'left, top';
 
         function onMove(e) {
           const dr     = desktop.getBoundingClientRect();
@@ -773,6 +775,7 @@
           win.style.top  = newT + 'px';
         }
         function onUp() {
+          win.style.willChange = '';
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup',   onUp);
         }
