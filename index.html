@@ -462,23 +462,23 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      height: 580px;
+      height: 720px;
       border-radius: 0 0 11px 11px;
     }
     .photos-gallery-heading {
       flex-shrink: 0;
-      padding: 18px 24px 12px;
-      font-size: 20px;
+      padding: 12px 14px 8px;
+      font-size: 14px;
       font-weight: 700;
       color: #1a1a1a;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .photos-gallery-body {
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 0 24px 24px;
+      padding: 0 12px 12px;
     }
     .photos-gallery-body::-webkit-scrollbar       { width: 7px; }
     .photos-gallery-body::-webkit-scrollbar-track { background: transparent; }
@@ -491,11 +491,11 @@
     .photos-grid {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
     }
     .photos-grid-row {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       align-items: flex-start;
     }
     .photos-grid-item {
@@ -503,6 +503,7 @@
       flex-shrink: 0;
       background: #d8d8d8;
       cursor: pointer;
+      border-radius: 3px;
       /* Reset <button> */
       border: none;
       padding: 0;
@@ -527,7 +528,7 @@
     .photos-viewer {
       display: flex;
       flex-direction: column;
-      height: 580px;
+      height: 720px;
       background: #1e1e1e;
       border-radius: 0 0 11px 11px;
       overflow: hidden;
@@ -1254,9 +1255,10 @@
     ];
 
     /**
-     * Justified-row photo grid.
-     * Packs photos into rows so each row fills containerWidth,
-     * preserving each photo's original aspect ratio.
+     * Justified photo grid — exactly 3 photos per row.
+     * Each row scales its three photos proportionally to fill containerWidth,
+     * preserving each photo's natural aspect ratio. Row height is clamped to
+     * [185, 250] px so portrait-heavy rows stay visually consistent.
      * @param {Photo[]} photos
      * @param {number} containerWidth  — measured at render time
      * @returns {string} HTML string
@@ -1264,30 +1266,31 @@
     function PhotoGrid(photos, containerWidth) {
       if (!photos.length) return '<div class="photos-empty">No Photos</div>';
 
-      const GAP    = 5;
-      const TARGET = 160; // target row height in px
+      const GAP      = 4;
+      const PER_ROW  = 3;
+      const MIN_H    = 185;
+      const MAX_H    = 250;
+      const LAST_H   = 215; // height for a partial final row
 
-      // Build justified rows
       const rows = [];
-      let row = [], arSum = 0;
-
-      for (const photo of photos) {
-        const ar = photo.width / photo.height;
-        row.push({ photo, ar });
-        arSum += ar;
-        const h = (containerWidth - GAP * (row.length - 1)) / arSum;
-        if (h <= TARGET) {
-          rows.push({ items: row, height: Math.round(h), last: false });
-          row = []; arSum = 0;
-        }
+      for (let i = 0; i < photos.length; i += PER_ROW) {
+        const chunk   = photos.slice(i, i + PER_ROW);
+        const isFull  = chunk.length === PER_ROW;
+        const arSum   = chunk.reduce((s, p) => s + p.width / p.height, 0);
+        const natural = isFull
+          ? (containerWidth - GAP * (chunk.length - 1)) / arSum
+          : LAST_H;
+        const height  = isFull
+          ? Math.round(Math.max(MIN_H, Math.min(MAX_H, natural)))
+          : LAST_H;
+        rows.push({ items: chunk, height, last: !isFull });
       }
-      // Final incomplete row — left-align at target height (don't stretch)
-      if (row.length) rows.push({ items: row, height: TARGET, last: true });
 
       const rowsHTML = rows.map(({ items, height, last }) => {
         const style = last ? 'justify-content:flex-start' : '';
-        const cells = items.map(({ photo, ar }) => {
-          const w = Math.round(ar * height);
+        const cells = items.map(photo => {
+          const ar = photo.width / photo.height;
+          const w  = Math.round(ar * height);
           return `<button class="photos-grid-item" style="width:${w}px;height:${height}px;" data-photo-id="${photo.id}" aria-label="${photo.alt}">
             <img src="${photo.thumb}" alt="" loading="lazy" aria-hidden="true" />
           </button>`;
@@ -1452,7 +1455,7 @@
       photosState.savedScrollTop = 0;
       photosWin = MacWindow({ title: 'Photos', width: 860, noPadding: true });
       const content = photosWin.querySelector('.mac-content');
-      content.style.height = '580px';
+      content.style.height = '720px';
       renderPhotos(content);
       photosWin.addEventListener('close-window', () => {
         _cleanupPhotos();
