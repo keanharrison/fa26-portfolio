@@ -1229,25 +1229,25 @@
 
     /** @type {Photo[]} — all photos in display order */
     const PHOTOS = [
-      { id: 'p1',  src: 'assets/photos/travel/macaw.jpg',          alt: 'Scarlet macaw perched on a rocky tree branch',                    width: 886,  height: 886  },
-      { id: 'p2',  src: 'assets/photos/life/friends-night.jpg',    alt: 'Group of friends at mini golf on a summer night',                 width: 1024, height: 768  },
-      { id: 'p3',  src: 'assets/photos/hobbies/skydiving.jpg',     alt: 'Tandem skydive in freefall above patchwork farmland',             width: 1896, height: 1659 },
-      { id: 'p4',  src: 'assets/photos/life/dinner-film.png',      alt: 'Smiling at dinner, shot on film',                                 width: 1086, height: 724  },
-      { id: 'p5',  src: 'assets/photos/travel/la-street.jpg',      alt: 'Palm tree-lined street in Los Angeles',                           width: 768,  height: 1024 },
-      { id: 'p6',  src: 'assets/photos/travel/bay-area-view.png',  alt: 'Golden hour view over the Bay Area from the Berkeley Hills',      width: 768,  height: 1024 },
-      { id: 'p7',  src: 'assets/photos/life/booz-allen.jpg',       alt: 'Interns gathered in the Booz Allen Hamilton office',              width: 1024, height: 768  },
-      { id: 'p8',  src: 'assets/photos/travel/colonnade-night.jpg',alt: 'Flower-draped colonnade walkway lit up at night',                 width: 951,  height: 1024 },
-      { id: 'p9',  src: 'assets/photos/life/uva-colonnade.jpg',    alt: 'UVA colonnade at golden hour',                                    width: 886,  height: 886  },
-      { id: 'p10', src: 'assets/photos/hobbies/coffee-shop.jpg',   alt: 'At a dimly lit coffee shop holding a latte',                      width: 2172, height: 1447 },
-      { id: 'p11', src: 'assets/photos/travel/la-hike.jpg',        alt: 'Overlooking the Los Angeles skyline from a hiking trail',         width: 1024, height: 909  },
-      { id: 'p12', src: 'assets/photos/hobbies/chess-coffee.jpg',  alt: 'Chess board and spiced latte on a wooden café table',             width: 1536, height: 2048 },
-      { id: 'p13', src: 'assets/photos/life/walk-sunset.png',      alt: 'Two friends walking down a road at golden-hour sunset',           width: 540,  height: 360  },
-      { id: 'p14', src: 'assets/photos/life/ocean-sunset.png',     alt: 'Two silhouettes standing at the ocean during sunset',             width: 738,  height: 360  },
-      { id: 'p15', src: 'assets/photos/travel/jet-ski.jpg',        alt: 'Riding a jet ski across open turquoise water',                    width: 768,  height: 1024 },
-      { id: 'p16', src: 'assets/photos/life/tsg-lecture.jpg',      alt: 'TSG strategy group presenting to a packed lecture hall',          width: 750,  height: 360  },
-      { id: 'p17', src: 'assets/photos/travel/beach-cats.jpg',     alt: 'Two white cats resting on a car dashboard near the ocean',        width: 768,  height: 1024 },
-      { id: 'p18', src: 'assets/photos/life/knowledge-conf.png',   alt: 'Knowledge conference panel at UVA Darden',                        width: 360,  height: 480  },
-      { id: 'p19', src: 'assets/photos/travel/mcintire-nz.png',    alt: 'McIntire School of Commerce group photo in New Zealand',          width: 1512, height: 2016 },
+      { id: 'p1',  src: 'assets/photos/travel/macaw.jpg',          thumb: 'assets/photos/thumbs/macaw.jpg',          alt: 'Scarlet macaw perched on a rocky tree branch',                    width: 886,  height: 886  },
+      { id: 'p2',  src: 'assets/photos/life/friends-night.jpg',    thumb: 'assets/photos/thumbs/friends-night.jpg',  alt: 'Group of friends at mini golf on a summer night',                 width: 1024, height: 768  },
+      { id: 'p3',  src: 'assets/photos/hobbies/skydiving.jpg',     thumb: 'assets/photos/thumbs/skydiving.jpg',      alt: 'Tandem skydive in freefall above patchwork farmland',             width: 1896, height: 1659 },
+      { id: 'p4',  src: 'assets/photos/life/dinner-film.png',      thumb: 'assets/photos/thumbs/dinner-film.jpg',    alt: 'Smiling at dinner, shot on film',                                 width: 1086, height: 724  },
+      { id: 'p5',  src: 'assets/photos/travel/la-street.jpg',      thumb: 'assets/photos/thumbs/la-street.jpg',      alt: 'Palm tree-lined street in Los Angeles',                           width: 768,  height: 1024 },
+      { id: 'p6',  src: 'assets/photos/travel/bay-area-view.png',  thumb: 'assets/photos/thumbs/bay-area-view.jpg',  alt: 'Golden hour view over the Bay Area from the Berkeley Hills',      width: 768,  height: 1024 },
+      { id: 'p7',  src: 'assets/photos/life/booz-allen.jpg',       thumb: 'assets/photos/thumbs/booz-allen.jpg',     alt: 'Interns gathered in the Booz Allen Hamilton office',              width: 1024, height: 768  },
+      { id: 'p8',  src: 'assets/photos/travel/colonnade-night.jpg',thumb: 'assets/photos/thumbs/colonnade-night.jpg',alt: 'Flower-draped colonnade walkway lit up at night',                 width: 951,  height: 1024 },
+      { id: 'p9',  src: 'assets/photos/life/uva-colonnade.jpg',    thumb: 'assets/photos/thumbs/uva-colonnade.jpg',  alt: 'UVA colonnade at golden hour',                                    width: 886,  height: 886  },
+      { id: 'p10', src: 'assets/photos/hobbies/coffee-shop.jpg',   thumb: 'assets/photos/thumbs/coffee-shop.jpg',   alt: 'At a dimly lit coffee shop holding a latte',                      width: 2172, height: 1447 },
+      { id: 'p11', src: 'assets/photos/travel/la-hike.jpg',        thumb: 'assets/photos/thumbs/la-hike.jpg',        alt: 'Overlooking the Los Angeles skyline from a hiking trail',         width: 1024, height: 909  },
+      { id: 'p12', src: 'assets/photos/hobbies/chess-coffee.jpg',  thumb: 'assets/photos/thumbs/chess-coffee.jpg',  alt: 'Chess board and spiced latte on a wooden café table',             width: 1536, height: 2048 },
+      { id: 'p13', src: 'assets/photos/life/walk-sunset.png',      thumb: 'assets/photos/thumbs/walk-sunset.jpg',   alt: 'Two friends walking down a road at golden-hour sunset',           width: 540,  height: 360  },
+      { id: 'p14', src: 'assets/photos/life/ocean-sunset.png',     thumb: 'assets/photos/thumbs/ocean-sunset.jpg',  alt: 'Two silhouettes standing at the ocean during sunset',             width: 738,  height: 360  },
+      { id: 'p15', src: 'assets/photos/travel/jet-ski.jpg',        thumb: 'assets/photos/thumbs/jet-ski.jpg',        alt: 'Riding a jet ski across open turquoise water',                    width: 768,  height: 1024 },
+      { id: 'p16', src: 'assets/photos/life/tsg-lecture.jpg',      thumb: 'assets/photos/thumbs/tsg-lecture.jpg',   alt: 'TSG strategy group presenting to a packed lecture hall',          width: 750,  height: 360  },
+      { id: 'p17', src: 'assets/photos/travel/beach-cats.jpg',     thumb: 'assets/photos/thumbs/beach-cats.jpg',    alt: 'Two white cats resting on a car dashboard near the ocean',        width: 768,  height: 1024 },
+      { id: 'p18', src: 'assets/photos/life/knowledge-conf.png',   thumb: 'assets/photos/thumbs/knowledge-conf.jpg',alt: 'Knowledge conference panel at UVA Darden',                        width: 360,  height: 480  },
+      { id: 'p19', src: 'assets/photos/travel/mcintire-nz.png',    thumb: 'assets/photos/thumbs/mcintire-nz.jpg',   alt: 'McIntire School of Commerce group photo in New Zealand',          width: 1512, height: 2016 },
     ];
 
     /**
@@ -1286,7 +1286,7 @@
         const cells = items.map(({ photo, ar }) => {
           const w = Math.round(ar * height);
           return `<button class="photos-grid-item" style="width:${w}px;height:${height}px;" data-photo-id="${photo.id}" aria-label="${photo.alt}">
-            <img src="${photo.src}" alt="" loading="lazy" aria-hidden="true" />
+            <img src="${photo.thumb}" alt="" loading="lazy" aria-hidden="true" />
           </button>`;
         }).join('');
         return `<div class="photos-grid-row" style="${style}">${cells}</div>`;
