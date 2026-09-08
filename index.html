@@ -345,6 +345,14 @@
       /* no extra outline — the parent fill is the selection indicator */
     }
 
+    /* Subtle visited/opened state: dim the label so opened folders are scannable */
+    .desktop-icon.is-opened .icon-label {
+      color: rgba(255, 255, 255, 0.62);
+    }
+    .desktop-icon.is-opened .folder-wrap {
+      opacity: 0.82;
+    }
+
     /* ── Focus-visible styles ──────────────────────────────────
        Dark desktop / dock: white ring
        Light windows:       Apple-blue ring
@@ -668,85 +676,91 @@
     .photos-next-btn { right: 12px; }
 
     /* ── Now Playing widget ──────────────────────────────────────
-       Frosted-glass music bar, bottom-left of the desktop.
+       Compact square macOS-style widget, top-right of the desktop.
     ─────────────────────────────────────────────────────────── */
     .now-playing {
       position: absolute;
-      left: 24px;
-      bottom: calc(6% + 96px); /* sits above the dock */
+      top: 22px;
+      right: 22px;
+      left: auto;
+      bottom: auto;
+      width: 172px;
+      height: 172px;
       display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px 8px 8px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.16);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 0;
+      padding: 14px 14px 12px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.10) 100%);
+      backdrop-filter: blur(28px) saturate(1.4);
+      -webkit-backdrop-filter: blur(28px) saturate(1.4);
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.38),
+        0 8px 28px rgba(0, 0, 0, 0.28);
       z-index: 10;
-      max-width: 288px;
+      max-width: none;
       user-select: none;
+      cursor: grab;
+    }
+    .now-playing.is-dragging {
+      cursor: grabbing;
+      will-change: left, top;
+    }
+    .now-playing:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.82);
+      outline-offset: 3px;
     }
     .np-art {
-      width: 42px;
-      height: 42px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.14);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .np-art img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
-      display: block;
-    }
-    .np-art-placeholder {
-      opacity: 0.45;
+      display: none;
     }
     .np-info {
       flex: 1;
       min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: 2px;
     }
     .np-title {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       color: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.3;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .np-artist {
       font-size: 11px;
       font-weight: 400;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.68);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.3;
-      margin-top: 2px;
+      margin-top: 4px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .np-controls {
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: space-between;
+      gap: 8px;
       flex-shrink: 0;
+      margin-top: 8px;
     }
     .np-btn {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.94);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -755,22 +769,20 @@
       padding: 0;
       flex-shrink: 0;
     }
-    .np-btn:hover { background: rgba(255, 255, 255, 0.22); }
-    .np-btn:active { background: rgba(255, 255, 255, 0.32); }
-    /* Playing pulse on the art square */
-    .np-art.np-playing {
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+    .np-btn:hover { background: rgba(255, 255, 255, 0.24); }
+    .np-btn:active { background: rgba(255, 255, 255, 0.34); }
+    .np-btn:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.82);
+      outline-offset: 2px;
     }
-    .np-open-link {
-      display: block;
-      font-size: 10px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: rgba(255, 255, 255, 0.48);
-      text-decoration: none;
-      margin-top: 3px;
-      transition: color 0.12s ease;
+    .np-play { width: 36px; height: 36px; }
+    .np-sound { width: 28px; height: 28px; }
+    .now-playing.is-playing {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.42),
+        0 8px 28px rgba(0, 0, 0, 0.28),
+        0 0 0 1px rgba(255, 255, 255, 0.18);
     }
-    .np-open-link:hover { color: rgba(255, 255, 255, 0.85); }
 
     /* ── Reduced motion ─────────────────────────────────────────
        Disable all non-essential transitions and transform-based
@@ -793,7 +805,7 @@
       .photos-viewer-back,
       .photos-nav-btn,
       .np-btn,
-      .np-art {
+      .now-playing {
         transition: none !important;
         animation: none !important;
       }
@@ -820,21 +832,17 @@
     </div>
 
     <!-- Now Playing widget -->
-    <div class="now-playing" id="now-playing" aria-label="Now Playing">
-      <div class="np-art" id="np-art" aria-hidden="true">
-        <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e023beca4a9acadd343338a8356" alt="Album art for Midas" />
-      </div>
+    <div class="now-playing" id="now-playing" aria-label="Now Playing: Midas by Maribou State, Holly Walker">
       <div class="np-info">
         <div class="np-title"  id="np-title">Midas</div>
         <div class="np-artist" id="np-artist">Maribou State, Holly Walker</div>
-        <a class="np-open-link" href="https://open.spotify.com/track/6VNooTY5w9A9wg1YUsEbKB" target="_blank" rel="noopener" aria-label="Open song in Spotify">Open in Spotify ↗</a>
       </div>
       <div class="np-controls">
-        <button class="np-btn" id="np-play" aria-label="Play soundtrack">
+        <button class="np-btn np-play" id="np-play" aria-label="Play soundtrack">
           <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M8 5v14l11-7z"/></svg>
         </button>
-        <button class="np-btn" id="np-mute" aria-label="Turn soundtrack off">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <button class="np-btn np-sound" id="np-mute" aria-label="Turn soundtrack off">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
         </button>
       </div>
     </div>
@@ -1015,14 +1023,16 @@
     // Experience data
     // ══════════════════════════════════════════
     const EXPERIENCES = [
-      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', left: '14%', top: '18%' },
-      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', left: '64%', top: '12%' },
-      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', left: '74%', top: '34%' },
-      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', left: '6%',  top: '42%' },
-      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', left: '20%', top: '60%' },
-      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', left: '67%', top: '55%' },
-      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', left: '78%', top: '66%' },
-      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', left: '8%',  top: '68%' },
+      // Left column
+      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', left: '4.5%', top: '7%' },
+      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', left: '4.5%', top: '24%' },
+      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', left: '4.5%', top: '41%' },
+      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', left: '4.5%', top: '58%' },
+      // Right column — starts below the top-right music widget
+      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', right: '3.5%', top: '32%' },
+      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', right: '3.5%', top: '47%' },
+      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', right: '3.5%', top: '62%' },
+      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', right: '3.5%', top: '77%' },
     ];
 
     // ══════════════════════════════════════════
@@ -1224,11 +1234,12 @@
     // ══════════════════════════════════════════
 
     function DesktopItem(exp) {
-      const { id, name, folderIcon, left, top, colorFilter = '', onOpen = null } = exp;
+      const { id, name, folderIcon, left, top, right, colorFilter = '', onOpen = null } = exp;
       const el = document.createElement('button');
       el.className = 'desktop-icon';
       el.dataset.id = id;
-      el.style.left = left;
+      if (left)  el.style.left  = left;
+      if (right) el.style.right = right;
       el.style.top  = top;
       el.setAttribute('aria-label', name);
       const imgStyle = colorFilter ? ` style="filter:${colorFilter}"` : '';
@@ -1268,7 +1279,8 @@
           const dy = e.clientY - mouseStartY;
           if (!didDrag && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
             didDrag = true;
-            // Commit px position to style only now, right before first move
+            // Convert right-anchored icons to left/top px so drag is stable
+            el.style.right = 'auto';
             el.style.left = elStartLeft + 'px';
             el.style.top  = elStartTop  + 'px';
             el.classList.add('is-dragging');
@@ -1305,6 +1317,7 @@
         // Double-click detection
         const now = Date.now();
         if (now - lastClickTime < 400) {
+          el.classList.add('is-opened');
           if (onOpen) {
             onOpen();
           } else if (openWindows[id]) {
@@ -1329,6 +1342,7 @@
         e.preventDefault(); // prevent page scroll on Space
         document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
         el.classList.add('selected');
+        el.classList.add('is-opened');
         if (onOpen) {
           onOpen();
         } else if (openWindows[id]) {
@@ -1404,8 +1418,8 @@
       name: 'Resume',
       folderIcon: 'assets/icons/folder.png',
       colorFilter: 'hue-rotate(140deg) saturate(1.15)',
-      left: '43%',
-      top: '20%',
+      left: '4.5%',
+      top: '75%',
       onOpen: openResume,
     });
     desktop.insertBefore(resumeFolder, desktop.querySelector('.dock'));
@@ -1789,11 +1803,11 @@
     function _npSetPlayUI(isPlaying) {
       _npPlaying = isPlaying;
       const playBtn = document.getElementById('np-play');
-      const artEl   = document.getElementById('np-art');
+      const widget  = document.getElementById('now-playing');
       if (!playBtn) return;
       playBtn.innerHTML = isPlaying ? _NP_ICONS.pause : _NP_ICONS.play;
       playBtn.setAttribute('aria-label', isPlaying ? 'Pause soundtrack' : 'Play soundtrack');
-      if (artEl) artEl.classList.toggle('np-playing', isPlaying);
+      if (widget) widget.classList.toggle('is-playing', isPlaying);
     }
 
     function _npSetSoundUI(isOff) {
@@ -1805,6 +1819,7 @@
     }
 
     (function initNowPlaying() {
+      const widget   = document.getElementById('now-playing');
       const playBtn  = document.getElementById('np-play');
       const soundBtn = document.getElementById('np-mute');
 
@@ -1812,17 +1827,67 @@
       _npSetPlayUI(false);
       _npSetSoundUI(false);
 
-      // Play / Pause — primary transport control
-      playBtn.addEventListener('click', () => {
-        if (!_embedController) return; // Spotify not yet ready
-        if (_npSoundOff) _npSetSoundUI(false); // clear sound-off state on manual play
-        _embedController.togglePlay();
-        // Authoritative state update arrives via playback_update event
+      // Drag like desktop folders: threshold so clicks don't jump the widget
+      let active = false;
+      let didDrag = false;
+      let mouseStartX, mouseStartY;
+      let elStartLeft, elStartTop;
+
+      widget.addEventListener('mousedown', e => {
+        if (e.button !== 0) return;
+        if (e.target.closest('button, a')) return; // don't drag from controls
+        const dr = desktop.getBoundingClientRect();
+        const er = widget.getBoundingClientRect();
+        elStartLeft = er.left - dr.left;
+        elStartTop  = er.top  - dr.top;
+        active = true;
+        didDrag = false;
+        mouseStartX = e.clientX;
+        mouseStartY = e.clientY;
+        widget.style.zIndex = ++_zTop;
+        e.preventDefault();
+
+        function onMove(e) {
+          if (!active) return;
+          const dx = e.clientX - mouseStartX;
+          const dy = e.clientY - mouseStartY;
+          if (!didDrag && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+            didDrag = true;
+            widget.style.left = elStartLeft + 'px';
+            widget.style.top  = elStartTop  + 'px';
+            widget.style.right = 'auto';
+            widget.classList.add('is-dragging');
+          }
+          if (!didDrag) return;
+          const dr = desktop.getBoundingClientRect();
+          const newLeft = Math.max(0, Math.min(elStartLeft + dx, dr.width  - widget.offsetWidth));
+          const newTop  = Math.max(0, Math.min(elStartTop  + dy, dr.height - widget.offsetHeight));
+          widget.style.left = newLeft + 'px';
+          widget.style.top  = newTop  + 'px';
+        }
+
+        function onUp() {
+          active = false;
+          widget.classList.remove('is-dragging');
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        }
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
       });
 
-      // Sound On/Off — Spotify iFrame API has no volume/mute method.
-      // Sound Off maps to pause; Sound On maps to resume.
-      soundBtn.addEventListener('click', () => {
+      // Play / Pause — primary transport control
+      playBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (!_embedController) return;
+        if (_npSoundOff) _npSetSoundUI(false);
+        _embedController.togglePlay();
+      });
+
+      // Sound On/Off — pause / resume only; Spotify has no mute API
+      soundBtn.addEventListener('click', e => {
+        e.stopPropagation();
         if (!_embedController) return;
         if (_npSoundOff) {
           _npSetSoundUI(false);
