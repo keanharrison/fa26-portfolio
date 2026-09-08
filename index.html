@@ -592,6 +592,7 @@
     .resume-open-link:hover { text-decoration: underline; }
     .resume-iframe {
       flex: 1;
+      min-height: 0;    /* critical: allows flex child to shrink below content size */
       width: 100%;
       border: none;
       display: block;
@@ -1361,21 +1362,28 @@
         return;
       }
 
-      const dr          = desktop.getBoundingClientRect();
-      const TITLEBAR_H  = 28;
-      const TOP_MARGIN  = Math.max(16, Math.round(dr.height * 0.04));
-      const DOCK_CLEAR  = Math.round(dr.height * 0.18); // dock height + gap
+      const dr         = desktop.getBoundingClientRect();
+      const TITLEBAR_H = 28;
+      const TOP_MARGIN = Math.max(14, Math.round(dr.height * 0.03));
+      const DOCK_CLEAR = Math.round(dr.height * 0.16); // dock + clearance
 
-      // Width: fill 86% of desktop, capped at 720px
-      const RESUME_W  = Math.min(720, Math.max(360, Math.round(dr.width * 0.86)));
-      // Height: fill all available vertical space — no artificial floor
-      const CONTENT_H = Math.max(260, dr.height - TOP_MARGIN - DOCK_CLEAR - TITLEBAR_H);
+      // Total window height: 83% of desktop, clamped to fit on screen
+      const WIN_H    = Math.min(Math.round(dr.height * 0.83), dr.height - TOP_MARGIN - DOCK_CLEAR);
+      const CONTENT_H = WIN_H - TITLEBAR_H;
+
+      // Width: portrait-guaranteed — always at least 30px shorter than window height,
+      // capped at 680px so wide viewports don't go too broad.
+      const RESUME_W = Math.min(680, WIN_H - 30);
 
       resumeWin = MacWindow({ title: 'Resume', width: RESUME_W, noPadding: true });
       const content = resumeWin.querySelector('.mac-content');
+
+      // Make content a flex column so the iframe fills all remaining height
       content.style.height        = CONTENT_H + 'px';
       content.style.display       = 'flex';
       content.style.flexDirection = 'column';
+      content.style.overflow      = 'hidden'; // iframe handles its own scroll
+
       content.innerHTML = `
         <div class="resume-toolbar">
           <a href="assets/kean_resume.pdf" target="_blank" rel="noopener" class="resume-open-link">Open PDF ↗</a>
@@ -1383,8 +1391,8 @@
         <iframe src="assets/kean_resume.pdf#toolbar=0" class="resume-iframe" title="Resume PDF"></iframe>
       `;
 
-      // Pin to top margin, centre horizontally
-      resumeWin.style.left = Math.max(0, Math.round((dr.width  - RESUME_W)  / 2)) + 'px';
+      // Centre horizontally, pin near top of desktop
+      resumeWin.style.left = Math.max(0, Math.round((dr.width - RESUME_W) / 2)) + 'px';
       resumeWin.style.top  = TOP_MARGIN + 'px';
 
       resumeWin.addEventListener('close-window', () => { resumeWin = null; });
