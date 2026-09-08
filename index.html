@@ -1065,14 +1065,14 @@
     // Experience data
     // ══════════════════════════════════════════
     const EXPERIENCES = [
-      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png' },
-      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png' },
-      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png' },
-      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png' },
-      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png' },
-      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png' },
-      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png' },
-      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png' },
+      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.055, y: 0.08 },
+      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.210, y: 0.13 },
+      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.035, y: 0.37 },
+      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.165, y: 0.52 },
+      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.060, y: 0.70 },
+      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.695, y: 0.30 },
+      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.820, y: 0.47 },
+      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.730, y: 0.66 },
     ];
 
     // ══════════════════════════════════════════
@@ -1404,50 +1404,30 @@
 
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
 
-    // Default two-column layout from the actual desktop bounds.
-    // Positions are written once as left/top px; dragging overwrites them
-    // and is never snapped back until the next full page load.
-    const FOLDER_EDGE = 28;
+    // Convert each folder's independent (x, y) fraction into desktop pixels.
+    // No shared grid — refresh restores these defaults; dragging never snaps back.
     function layoutDesktopFolders() {
       const dr = desktop.getBoundingClientRect();
-      const items = [...desktop.querySelectorAll('.desktop-icon')];
-      if (!items.length) return;
-
       const dockEl = desktop.querySelector('.dock');
       const dockTop = dockEl
         ? dockEl.getBoundingClientRect().top - dr.top
         : dr.height * 0.9;
-      const bottomLimit = dockTop - 16;
 
-      const widget = document.getElementById('now-playing');
-      const widgetBottom = widget
-        ? widget.getBoundingClientRect().bottom - dr.top
-        : 0;
-
-      const leftCol  = items.slice(0, 4);
-      const rightCol = items.slice(4, 8);
-      const colW = Math.max(...items.map(el => el.offsetWidth), 118);
-
-      function placeColumn(col, startTop, x) {
-        const n = col.length;
-        const itemH = Math.max(...col.map(el => el.offsetHeight));
-        const available = Math.max(itemH, bottomLimit - startTop);
-        const leftover = available - n * itemH;
-        const gap = n > 1 ? leftover / (n - 1) : 0;
-        col.forEach((el, i) => {
-          el.style.right = 'auto';
-          el.style.left  = x + 'px';
-          el.style.top   = Math.round(startTop + i * (itemH + gap)) + 'px';
-        });
-        return { gap, itemH, startTop };
-      }
-
-      const leftTop  = 24;
-      const rightTop = Math.max(24, widgetBottom + 18);
-      placeColumn(leftCol,  leftTop,  FOLDER_EDGE);
-      placeColumn(rightCol, rightTop, dr.width - FOLDER_EDGE - colW);
+      desktop.querySelectorAll('.desktop-icon').forEach(el => {
+        const exp = EXPERIENCES.find(e => e.id === el.dataset.id);
+        if (!exp) return;
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        const maxL = Math.max(8, dr.width - w - 8);
+        const maxT = Math.max(8, dockTop - h - 12);
+        const left = Math.round(exp.x * dr.width);
+        const top  = Math.round(exp.y * dr.height);
+        el.style.right = 'auto';
+        el.style.left  = Math.max(8, Math.min(left, maxL)) + 'px';
+        el.style.top   = Math.max(8, Math.min(top,  maxT)) + 'px';
+      });
     }
-    requestAnimationFrame(layoutDesktopFolders);
+    requestAnimationFrame(() => requestAnimationFrame(layoutDesktopFolders));
 
     // ══════════════════════════════════════════
     // Notes app
