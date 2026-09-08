@@ -706,14 +706,14 @@
       left: 3.5%;
       right: auto;
       bottom: auto;
-      width: 186px;
-      height: 196px;
+      width: 210px;
+      height: 252px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       gap: 0;
-      padding: 12px 14px 10px;
+      padding: 14px 16px 14px;
       border-radius: 28px;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.10) 100%);
       backdrop-filter: blur(28px) saturate(1.4);
@@ -750,14 +750,14 @@
       flex-shrink: 0;
     }
     .np-art {
-      width: 92px;
-      height: 92px;
-      border-radius: 14px;
+      width: 108px;
+      height: 108px;
+      border-radius: 16px;
       background: rgba(255, 255, 255, 0.14);
       flex-shrink: 0;
       overflow: hidden;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.32);
-      margin: 10px auto 8px;
+      margin: 12px auto 10px;
     }
     .np-art img {
       width: 100%;
@@ -765,30 +765,53 @@
       object-fit: cover;
       display: block;
     }
-    .np-open-link {
-      display: block;
-      font-size: 10px;
-      font-weight: 500;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: rgba(255, 255, 255, 0.58);
-      text-decoration: none;
-      margin: 0 0 8px;
-      flex-shrink: 0;
-    }
-    .np-open-link:hover { color: rgba(255, 255, 255, 0.92); }
-    .np-open-link:focus-visible {
-      outline: 2px solid rgba(255, 255, 255, 0.82);
-      outline-offset: 2px;
-      border-radius: 4px;
-    }
-    .np-controls {
+    .np-transport {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      justify-content: center;
+      gap: 10px;
       flex-shrink: 0;
+      margin: 0 0 10px;
+    }
+    .np-volume-wrap {
       width: 100%;
+      display: flex;
+      justify-content: center;
       margin-top: auto;
+      padding: 0 6px;
+    }
+    .np-volume {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.28);
+      outline: none;
+      cursor: pointer;
+    }
+    .np-volume::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      cursor: grab;
+    }
+    .np-volume::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: none;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      cursor: grab;
+    }
+    .np-volume:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.82);
+      outline-offset: 3px;
     }
     .np-btn {
       width: 28px;
@@ -811,8 +834,8 @@
       outline: 2px solid rgba(255, 255, 255, 0.82);
       outline-offset: 2px;
     }
-    .np-play { width: 32px; height: 32px; }
-    .np-sound { width: 26px; height: 26px; }
+    .np-play { width: 36px; height: 36px; }
+    .np-sound { width: 28px; height: 28px; }
     .now-playing.is-playing {
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.42),
@@ -874,14 +897,16 @@
       <div class="np-art" id="np-art" aria-hidden="true">
         <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e023beca4a9acadd343338a8356" alt="" />
       </div>
-      <a class="np-open-link" href="https://open.spotify.com/track/6VNooTY5w9A9wg1YUsEbKB" target="_blank" rel="noopener" aria-label="Open song in Spotify">Open in Spotify ↗</a>
-      <div class="np-controls">
+      <div class="np-transport">
         <button class="np-btn np-play" id="np-play" aria-label="Play soundtrack">
           <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M8 5v14l11-7z"/></svg>
         </button>
         <button class="np-btn np-sound" id="np-mute" aria-label="Turn soundtrack off">
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
         </button>
+      </div>
+      <div class="np-volume-wrap">
+        <input class="np-volume" id="np-volume" type="range" min="0" max="100" value="80" aria-label="Volume" />
       </div>
     </div>
 
@@ -1058,14 +1083,14 @@
     // Experience data
     // ══════════════════════════════════════════
     const EXPERIENCES = [
-      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.28, y: 0.16 },
-      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.08, y: 0.38 },
-      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.40, y: 0.24 },
-      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.12, y: 0.58 },
-      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.20, y: 0.76 },
-      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.86, y: 0.14 },
-      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.78, y: 0.42 },
-      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.88, y: 0.68 },
+      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.26, y: 0.15 },
+      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.43, y: 0.20 },
+      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.08, y: 0.36 },
+      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.16, y: 0.54 },
+      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.10, y: 0.73 },
+      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.84, y: 0.16 },
+      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.90, y: 0.40 },
+      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.82, y: 0.65 },
     ];
 
     // ══════════════════════════════════════════
@@ -1435,18 +1460,19 @@
           `I create software solutions to solve human struggles uncovered through meaningful conversations. My time at UVA has been defined by finding ways to contribute to the campus. In my first semester, I joined Anthropic as a Product Ambassador and onboarded 300+ new users to Claude. Then, I joined TSG and led a team of 5 engineers on a research project for Oracle. Most recently, my co-founder and I got accepted into UVA Darden's ultra-competitive iLab Incubator program where our venture $5K in non-dilutive funding.`,
           `I believe great products don't just solve problems - they are deeply resonant, strategically grounded, and culturally aware. My approach to product blends granular consumer insight, well-founded features, and continuous iteration to ensure consistent quality.`,
           `When I'm not building, you'll find me hunting for vintage clothes, exploring coffee shops with friends, or drawing. I'm always open to collaborating on projects that push innovative boundaries and challenge conventional thinking.`,
-          `Let's <button type="button" class="notes-connect">connect</button>:\n\nkean.thurman.harrison@gmail.com\ntru3us@virginia.edu (UVA email)\n(703) 850-6946`,
+          `Let's <button type="button" class="notes-connect">connect</button>`,
         ],
         createdAt: new Date('2026-09-05T21:51:00'),
       },
       {
-        id: 'links',
-        title: 'Links',
+        id: 'contact',
+        title: 'Contact',
         content: [
           `<a href="assets/kean_resume.pdf" target="_blank" rel="noopener">Resume</a>`,
           `<a href="mailto:kean.thurman.harrison@gmail.com">Gmail</a>`,
           `<a href="mailto:tru3us@virginia.edu">UVA Email</a>`,
           `<a href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener">LinkedIn</a>`,
+          `<a href="tel:7038506946">(703) 850-6946</a>`,
         ],
         createdAt: new Date('2026-09-05T21:52:00'),
       },
@@ -1538,7 +1564,7 @@
         notesMc.querySelectorAll('.notes-connect').forEach(btn => {
           btn.addEventListener('click', e => {
             e.preventDefault();
-            _notesActiveId = 'links';
+            _notesActiveId = 'contact';
             renderNotes();
           });
         });
