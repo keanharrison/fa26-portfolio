@@ -702,18 +702,18 @@
     ─────────────────────────────────────────────────────────── */
     .now-playing {
       position: absolute;
-      top: 15%;
-      left: 10%;
+      top: 5%;
+      left: 3.5%;
       right: auto;
       bottom: auto;
-      width: 172px;
-      height: 172px;
+      width: 186px;
+      height: 196px;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: flex-start;
       gap: 0;
-      padding: 14px 14px 12px;
+      padding: 12px 14px 10px;
       border-radius: 28px;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.10) 100%);
       backdrop-filter: blur(28px) saturate(1.4);
@@ -726,6 +726,7 @@
       max-width: none;
       user-select: none;
       cursor: grab;
+      text-align: center;
     }
     .now-playing.is-dragging {
       cursor: grabbing;
@@ -734,34 +735,6 @@
     .now-playing:focus-visible {
       outline: 2px solid rgba(255, 255, 255, 0.82);
       outline-offset: 3px;
-    }
-    .np-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-    .np-art {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.14);
-      flex-shrink: 0;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
-    }
-    .np-art img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .np-info {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
     .np-title {
       font-size: 13px;
@@ -773,17 +746,40 @@
       line-height: 1.25;
       letter-spacing: -0.01em;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      width: 100%;
+      flex-shrink: 0;
     }
-    .np-artist {
-      font-size: 11px;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 0.68);
-      white-space: nowrap;
+    .np-art {
+      width: 92px;
+      height: 92px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.14);
+      flex-shrink: 0;
       overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.3;
-      margin-top: 4px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.32);
+      margin: 10px auto 8px;
+    }
+    .np-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .np-open-link {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: rgba(255, 255, 255, 0.58);
+      text-decoration: none;
+      margin: 0 0 8px;
+      flex-shrink: 0;
+    }
+    .np-open-link:hover { color: rgba(255, 255, 255, 0.92); }
+    .np-open-link:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.82);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
     .np-controls {
       display: flex;
@@ -791,11 +787,12 @@
       justify-content: space-between;
       gap: 8px;
       flex-shrink: 0;
-      margin-top: 8px;
+      width: 100%;
+      margin-top: auto;
     }
     .np-btn {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       border: none;
       background: rgba(255, 255, 255, 0.14);
@@ -814,8 +811,8 @@
       outline: 2px solid rgba(255, 255, 255, 0.82);
       outline-offset: 2px;
     }
-    .np-play { width: 36px; height: 36px; }
-    .np-sound { width: 28px; height: 28px; }
+    .np-play { width: 32px; height: 32px; }
+    .np-sound { width: 26px; height: 26px; }
     .now-playing.is-playing {
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.42),
@@ -873,15 +870,11 @@
 
     <!-- Now Playing widget -->
     <div class="now-playing" id="now-playing" aria-label="Now Playing: Midas by Maribou State, Holly Walker">
-      <div class="np-top">
-        <div class="np-art" id="np-art" aria-hidden="true">
-          <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e023beca4a9acadd343338a8356" alt="" />
-        </div>
-        <div class="np-info">
-          <div class="np-title"  id="np-title">Midas</div>
-          <div class="np-artist" id="np-artist">Maribou State, Holly Walker</div>
-        </div>
+      <div class="np-title" id="np-title">Midas</div>
+      <div class="np-art" id="np-art" aria-hidden="true">
+        <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e023beca4a9acadd343338a8356" alt="" />
       </div>
+      <a class="np-open-link" href="https://open.spotify.com/track/6VNooTY5w9A9wg1YUsEbKB" target="_blank" rel="noopener" aria-label="Open song in Spotify">Open in Spotify ↗</a>
       <div class="np-controls">
         <button class="np-btn np-play" id="np-play" aria-label="Play soundtrack">
           <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M8 5v14l11-7z"/></svg>
@@ -1065,14 +1058,14 @@
     // Experience data
     // ══════════════════════════════════════════
     const EXPERIENCES = [
-      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.32, y: 0.22 },
-      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.15, y: 0.40 },
-      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.35, y: 0.55 },
-      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.15, y: 0.65 },
-      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.23, y: 0.82 },
-      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.92, y: 0.22 },
-      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.83, y: 0.38 },
-      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.93, y: 0.52 },
+      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.28, y: 0.16 },
+      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.08, y: 0.38 },
+      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.40, y: 0.24 },
+      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.12, y: 0.58 },
+      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.20, y: 0.76 },
+      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.86, y: 0.14 },
+      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.78, y: 0.42 },
+      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.88, y: 0.68 },
     ];
 
     // ══════════════════════════════════════════
