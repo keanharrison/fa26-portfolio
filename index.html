@@ -698,13 +698,13 @@
     .photos-next-btn { right: 12px; }
 
     /* ── Now Playing widget ──────────────────────────────────────
-       Compact square macOS-style widget, top-right of the desktop.
+       Compact square macOS-style widget, upper-left of the desktop.
     ─────────────────────────────────────────────────────────── */
     .now-playing {
       position: absolute;
-      top: 22px;
-      right: 22px;
-      left: auto;
+      top: 15%;
+      left: 10%;
+      right: auto;
       bottom: auto;
       width: 172px;
       height: 172px;
@@ -1065,14 +1065,14 @@
     // Experience data
     // ══════════════════════════════════════════
     const EXPERIENCES = [
-      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.055, y: 0.08 },
-      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.210, y: 0.13 },
-      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.035, y: 0.37 },
-      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.165, y: 0.52 },
-      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.060, y: 0.70 },
-      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.695, y: 0.30 },
-      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.820, y: 0.47 },
-      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.730, y: 0.66 },
+      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.32, y: 0.22 },
+      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.15, y: 0.40 },
+      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.35, y: 0.55 },
+      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.15, y: 0.65 },
+      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.23, y: 0.82 },
+      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.92, y: 0.22 },
+      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.83, y: 0.38 },
+      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.93, y: 0.52 },
     ];
 
     // ══════════════════════════════════════════
@@ -1420,8 +1420,9 @@
         const h = el.offsetHeight;
         const maxL = Math.max(8, dr.width - w - 8);
         const maxT = Math.max(8, dockTop - h - 12);
-        const left = Math.round(exp.x * dr.width);
-        const top  = Math.round(exp.y * dr.height);
+        // Screenshot coordinates are visual centers; convert to top-left px
+        const left = Math.round(exp.x * dr.width  - w / 2);
+        const top  = Math.round(exp.y * dr.height - h / 2);
         el.style.right = 'auto';
         el.style.left  = Math.max(8, Math.min(left, maxL)) + 'px';
         el.style.top   = Math.max(8, Math.min(top,  maxT)) + 'px';
