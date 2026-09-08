@@ -713,16 +713,33 @@
       outline: 2px solid rgba(255, 255, 255, 0.82);
       outline-offset: 3px;
     }
+    .np-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
     .np-art {
-      display: none;
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.14);
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+    }
+    .np-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .np-info {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding-top: 2px;
+      justify-content: center;
     }
     .np-title {
       font-size: 13px;
@@ -805,6 +822,7 @@
       .photos-viewer-back,
       .photos-nav-btn,
       .np-btn,
+      .np-art,
       .now-playing {
         transition: none !important;
         animation: none !important;
@@ -833,9 +851,14 @@
 
     <!-- Now Playing widget -->
     <div class="now-playing" id="now-playing" aria-label="Now Playing: Midas by Maribou State, Holly Walker">
-      <div class="np-info">
-        <div class="np-title"  id="np-title">Midas</div>
-        <div class="np-artist" id="np-artist">Maribou State, Holly Walker</div>
+      <div class="np-top">
+        <div class="np-art" id="np-art" aria-hidden="true">
+          <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e023beca4a9acadd343338a8356" alt="" />
+        </div>
+        <div class="np-info">
+          <div class="np-title"  id="np-title">Midas</div>
+          <div class="np-artist" id="np-artist">Maribou State, Holly Walker</div>
+        </div>
       </div>
       <div class="np-controls">
         <button class="np-btn np-play" id="np-play" aria-label="Play soundtrack">
@@ -861,9 +884,6 @@
       <a class="dock-icon" href="https://www.instagram.com/keanharrison/" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram (opens in new tab)">
         <img src="assets/icons/instagram.png" alt="" aria-hidden="true" />
       </a>
-      <button class="dock-icon" id="btn-photos" title="Photos" aria-label="Open Photos">
-        <img src="assets/icons/photos.png" alt="" aria-hidden="true" />
-      </button>
       <a class="dock-icon" href="https://x.com/keanharr" target="_blank" rel="noopener" title="X" aria-label="X / Twitter (opens in new tab)">
         <img src="assets/icons/x.png" alt="" aria-hidden="true" />
       </a>
@@ -1754,6 +1774,7 @@
 
     let photosWin = null;
 
+    if (btnPhotos) {
     btnPhotos.addEventListener('click', () => {
       if (photosWin) {
         if (photosWin._minimized) { photosWin.restore(); }
@@ -1774,6 +1795,7 @@
       });
       winOpen(photosWin, desktop);
     });
+    }
 
     // ══════════════════════════════════════════
     // Now Playing widget — Spotify iFrame API
