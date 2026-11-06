@@ -41,6 +41,32 @@
       overflow: hidden;
     }
 
+    /* ── Photo viewer (Photos app, placeholder slides) ─────────── */
+    .pv { position: relative; display: flex; flex-direction: column; height: 540px; background: #1c1d1f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; user-select: none; }
+    .pv-bar { flex: 0 0 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 12px; background: #1c1d1f; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .pv-left, .pv-right { display: flex; align-items: center; gap: 12px; }
+    .pv-right { justify-content: flex-end; }
+    .pv-title { text-align: center; line-height: 1.25; }
+    .pv-title b { display: block; font-size: 13px; font-weight: 600; }
+    .pv-title span { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .pv-circle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+    .pv-circle:hover { background: rgba(255,255,255,0.14); }
+    .pv-circle.is-on { color: #ff453a; }
+    .pv-circle:focus-visible, .pv-arrow:focus-visible { outline: 2px solid rgba(255,255,255,0.8); outline-offset: 2px; }
+    .pv-zoom { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); font-size: 14px; }
+    .pv-zoom input { width: 84px; accent-color: #0a84ff; cursor: pointer; }
+    .pv-stage { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; background: #1c1d1f; min-height: 0; }
+    .pv-buffer { flex: 1; align-self: stretch; background: #2a2b2e; display: flex; align-items: center; justify-content: center; }
+    .pv-photo-wrap { flex: 0 1 64%; height: 100%; overflow: hidden; background: #2a2b2e; position: relative; }
+    .pv-photo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: rgba(255,255,255,0.55); font-size: 15px; transform-origin: center; transition: transform 0.15s ease; background: #2a2b2e; }
+    .pv-arrow { width: 40px; height: 40px; border-radius: 8px; border: none; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+    .pv-arrow:hover:not(:disabled) { background: rgba(255,255,255,0.22); color: #fff; }
+    .pv-arrow:disabled { opacity: 0.25; cursor: default; }
+    .pv-info { position: absolute; top: 60px; right: 12px; width: 280px; padding: 14px 16px; border-radius: 12px; background: rgba(44,45,48,0.96); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 12px 32px rgba(0,0,0,0.5); font-size: 13px; line-height: 1.5; user-select: text; z-index: 5; }
+    .pv-info[hidden] { display: none; }
+    .pv-info b { display: block; margin-bottom: 4px; font-size: 13px; }
+    .pv-info p { color: rgba(255,255,255,0.78); }
+
     /* Portrait background */
     .screen-bg {
       position: absolute;
@@ -101,6 +127,8 @@
       position: relative;
     }
     .dock-icon:hover { transform: scale(1.12) translateY(-3px); }
+    .dock-icon.is-dragging, .dock-icon.is-dragging:hover { transition: none; transform: scale(1.12); z-index: 30; cursor: grabbing; }
+    .dock-icon.is-dragging::before { opacity: 0 !important; }
 
     .dock-icon img {
       width: 100%;
@@ -274,7 +302,8 @@
 
     /* Scrollable content area */
     .mac-content {
-      flex: 1;
+      flex: 0 1 auto;
+      max-height: calc(100vh - 120px);
       overflow-y: auto;
       overflow-x: hidden;
       padding: 28px 28px 32px;
@@ -700,13 +729,13 @@
       right: auto;
       bottom: auto;
       width: 196px;
-      height: 196px;
+      height: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      gap: 0;
-      padding: 12px 14px 12px;
+      gap: 8px;
+      padding: 10px 10px 10px;
       border-radius: 28px;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.10) 100%);
       backdrop-filter: blur(28px) saturate(1.4);
@@ -742,6 +771,16 @@
       width: 100%;
       flex-shrink: 0;
     }
+    .np-embed {
+      width: 176px;
+      height: 176px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: default;
+    }
+    /* Spotify only offers a 352px square layout, so shrink it to 50% with a transform */
+    .np-embed iframe { display: block; width: 352px; height: 352px; border: 0; transform: scale(0.5); transform-origin: 0 0; }
     .np-art {
       width: 88px;
       height: 88px;
@@ -838,22 +877,10 @@
 
     <!-- Desktop Icons rendered by JS -->
 
-    <!-- Hidden Spotify iFrame controller — off-screen, never visible -->
-    <div style="position:absolute;width:1px;height:1px;overflow:hidden;left:-9999px;top:-9999px;" aria-hidden="true">
-      <div id="embed-iframe"></div>
-    </div>
-
-    <!-- Now Playing widget -->
-    <div class="now-playing" id="now-playing" aria-label="Now Playing: Midas by Maribou State, Holly Walker">
-      <div class="np-title" id="np-title">Midas</div>
-      <div class="np-art" id="np-art" aria-hidden="true">
-        <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e023beca4a9acadd343338a8356" alt="" />
-      </div>
-      <div class="np-transport">
-        <button class="np-btn np-play" id="np-play" aria-label="Play soundtrack">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-      </div>
+    <!-- Now Playing widget: the title is the drag handle; the Spotify player is visible and clickable -->
+    <div class="now-playing" id="now-playing" aria-label="Now Playing: A Fire Inside Of Me by Lucas Dekker">
+      <div class="np-title" id="np-title">A Fire Inside Of Me</div>
+      <div class="np-embed"><div id="embed-iframe"></div></div>
     </div>
 
     <!-- Dock -->
@@ -861,6 +888,12 @@
       <button class="dock-icon" id="btn-notes" title="Notes" aria-label="Open Notes">
         <img src="assets/icons/notes.png" alt="" aria-hidden="true" />
       </button>
+      <button class="dock-icon" id="btn-photos-viewer" title="Photos" aria-label="Open Photos">
+        <img src="assets/icons/photos-app.png" alt="" aria-hidden="true" />
+      </button>
+      <a class="dock-icon" href="https://drive.google.com/file/d/1BlEagKubbpzXUNEgaXmI-65F-ql6arxb/view?usp=sharing" target="_blank" rel="noopener" title="Resume" aria-label="Resume (opens in new tab)">
+        <img src="assets/icons/documents.png" alt="" aria-hidden="true" />
+      </a>
       <a class="dock-icon" href="https://github.com/keanharrison" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub (opens in new tab)">
         <img src="assets/icons/github.png" alt="" aria-hidden="true" />
       </a>
@@ -1028,21 +1061,28 @@
     // ══════════════════════════════════════════
     // Experience data
     // ══════════════════════════════════════════
+    // Each desktop folder is a category; its window lists these experiences newest-first.
     const EXPERIENCES = [
-      { id: 'booz-allen',       name: 'Booz Allen',         folderIcon: 'assets/icons/folder.png', x: 0.26, y: 0.15 },
-      { id: 'uva-darden',       name: 'UVA Darden',         folderIcon: 'assets/icons/folder.png', x: 0.45, y: 0.76 },
-      { id: 'anthropic',        name: 'Anthropic',           folderIcon: 'assets/icons/folder.png', x: 0.08, y: 0.36 },
-      { id: 'stealth-startup',  name: 'Stealth Startup',    folderIcon: 'assets/icons/folder.png', x: 0.29, y: 0.53 },
-      { id: 'tsg',              name: 'Technē Strategy',    folderIcon: 'assets/icons/folder.png', x: 0.10, y: 0.73 },
-      { id: 'johnson-controls', name: 'Johnson Controls',   folderIcon: 'assets/icons/folder.png', x: 0.84, y: 0.16 },
-      { id: 'beats-by-dre',     name: 'Beats by Dre',       folderIcon: 'assets/icons/folder.png', x: 0.90, y: 0.40 },
-      { id: 'keanfit',          name: 'KeanFit LLC',         folderIcon: 'assets/icons/folder.png', x: 0.82, y: 0.65 },
+      { id: 'entrepreneurship', name: 'Entrepreneurship', folderIcon: 'assets/icons/folder.png', items: ['independent-consultant', 'uva-darden', 'keanfit'] },
+      { id: 'client-facing',    name: 'Client-Facing',    folderIcon: 'assets/icons/folder.png', items: ['tsg', 'anthropic', 'johnson-controls'] },
+      { id: 'product',          name: 'Product',          folderIcon: 'assets/icons/folder.png', items: ['booz-allen', 'stealth-startup', 'beats-by-dre'] },
     ];
 
     // ══════════════════════════════════════════
     // Experience window content
     // ══════════════════════════════════════════
     const EXPERIENCE_CONTENT = {
+      'independent-consultant': {
+        company: 'Independent Consultant',
+        role: 'AI Solutions Engineer',
+        period: 'Present · Charlottesville, VA',
+        logo: 'assets/logos/stealth-startup.jpg',
+        bullets: [
+          'Building bespoke software for local restaurants in Charlottesville.',
+          'Scoping and shipping custom AI-powered tools around each restaurant\'s day-to-day operations.',
+        ],
+        skills: ['AI Solutions', 'Client Discovery', 'Custom Software', 'Full-Stack Development', 'Stakeholder Communication'],
+      },
       'booz-allen': {
         company: 'Booz Allen Hamilton',
         role: 'Product Engineer Intern',
@@ -1163,6 +1203,12 @@
     };
 
     function buildWindowContent(id, exp) {
+      // Category folder: stack each experience, separated by a gray line (the window scrolls)
+      if (exp && exp.items) {
+        const divider = '<div style="border-top:1px solid rgba(0,0,0,0.12);margin:28px 0;"></div>';
+        const resumeNote = '<p style="font-size:13px;color:#444;margin:0 0 24px;">Check out my <a href="https://drive.google.com/file/d/1BlEagKubbpzXUNEgaXmI-65F-ql6arxb/view?usp=sharing" target="_blank" rel="noopener" style="color:#0071e3;text-decoration:none;font-weight:500;">resume</a> for more</p>';
+        return resumeNote + exp.items.map(itemId => buildWindowContent(itemId, { name: '', folderIcon: exp.folderIcon })).join(divider);
+      }
       const d = EXPERIENCE_CONTENT[id] || {};
       const company = d.company || exp.name;
       const role    = d.role    || '';
@@ -1185,7 +1231,7 @@
         ">${s}</span>`)
         .join('');
       return `
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
           <div style="flex-shrink:0;width:${isLogo ? 'auto' : '56px'};max-width:140px;height:56px;display:flex;align-items:center;">
             <img src="${logoSrc}" alt="${company}" style="
               max-height:56px;
@@ -1198,17 +1244,13 @@
             " />
           </div>
           <div>
-            <div style="font-size:16px;font-weight:600;color:#1a1a1a;letter-spacing:-0.02em;line-height:1.2;">${company}</div>
-            <div style="font-size:13px;font-weight:500;color:#444;margin-top:3px;">${role}</div>
+            <div style="font-size:16px;font-weight:600;color:#1a1a1a;letter-spacing:-0.02em;line-height:1.2;">${role}</div>
+            <div style="font-size:13px;font-weight:500;color:#6e6e73;margin-top:3px;">${company}</div>
             <div style="font-size:11px;color:#6e6e73;margin-top:2px;letter-spacing:0.01em;">${period}</div>
           </div>
         </div>
-        <ul style="padding-left:18px;display:flex;flex-direction:column;gap:9px;margin-bottom:22px;">
-          ${bullets}
-        </ul>
         ${skills ? `
-        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:16px;margin-bottom:${links.length ? '16px' : '0'};">
-          <div style="font-size:10px;font-weight:600;color:#6e6e73;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Skills</div>
+        <div style="margin-bottom:${links.length ? '16px' : '0'};">
           <div style="display:flex;flex-wrap:wrap;gap:6px;">${skills}</div>
         </div>` : ''}
         ${links.length ? `
@@ -1368,31 +1410,31 @@
 
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
 
-    // Convert each folder's independent (x, y) fraction into desktop pixels.
-    // No shared grid — refresh restores these defaults; dragging never snaps back.
+    // Three folders down the right side: evenly spaced vertically (fixed step, starting near the top),
+    // with a loose horizontal stagger. Tweak STAGGER (px gap from the right edge) and TOP/STEP to taste.
+    // Refresh restores this; dragging still moves a folder freely.
+    const FOLDER_ORDER = ['entrepreneurship', 'client-facing', 'product'];
     function layoutDesktopFolders() {
       const dr = desktop.getBoundingClientRect();
-      const dockEl = desktop.querySelector('.dock');
-      const dockTop = dockEl
-        ? dockEl.getBoundingClientRect().top - dr.top
-        : dr.height * 0.9;
+      const icons = FOLDER_ORDER
+        .map(id => desktop.querySelector(`.desktop-icon[data-id="${id}"]`))
+        .filter(Boolean);
+      if (!icons.length) return;
+      const w = icons[0].offsetWidth;
+      const h = icons[0].offsetHeight;
+      const STAGGER = [64, 210, 80];
+      const TOP = 56;
+      const STEP = Math.min(190, (dr.height - TOP - h - 24) / Math.max(1, icons.length - 1));
 
-      desktop.querySelectorAll('.desktop-icon').forEach(el => {
-        const exp = EXPERIENCES.find(e => e.id === el.dataset.id);
-        if (!exp) return;
-        const w = el.offsetWidth;
-        const h = el.offsetHeight;
-        const maxL = Math.max(8, dr.width - w - 8);
-        const maxT = Math.max(8, dockTop - h - 12);
-        // Screenshot coordinates are visual centers; convert to top-left px
-        const left = Math.round(exp.x * dr.width  - w / 2);
-        const top  = Math.round(exp.y * dr.height - h / 2);
+      icons.forEach((el, i) => {
         el.style.right = 'auto';
-        el.style.left  = Math.max(8, Math.min(left, maxL)) + 'px';
-        el.style.top   = Math.max(8, Math.min(top,  maxT)) + 'px';
+        el.style.left  = Math.max(8, Math.round(dr.width - w - STAGGER[i % STAGGER.length])) + 'px';
+        el.style.top   = Math.round(TOP + i * STEP) + 'px';
       });
     }
     requestAnimationFrame(() => requestAnimationFrame(layoutDesktopFolders));
+    // Re-run once images/fonts have loaded and the dock has its real size
+    window.addEventListener('load', layoutDesktopFolders);
 
     // ══════════════════════════════════════════
     // Notes app
@@ -1402,25 +1444,12 @@
         id: 'about-me',
         title: 'About Me',
         content: [
-          `I'm Kean Harrison, a fourth-year at UVA majoring in Cognitive Science and minoring in Data Science and Business.`,
-          `I create software solutions to solve human struggles uncovered through meaningful conversations. My time at UVA has been defined by finding ways to contribute to the campus. In my first semester, I joined Anthropic as a Product Ambassador and onboarded 300+ new users to Claude. Then, I joined TSG and led a team of 5 engineers on a research project for Oracle. Most recently, my co-founder and I got accepted into UVA Darden's ultra-competitive iLab Incubator program where our venture $5K in non-dilutive funding.`,
-          `I believe great products don't just solve problems - they are deeply resonant, strategically grounded, and culturally aware. My approach to product blends granular consumer insight, well-founded features, and continuous iteration to ensure consistent quality.`,
-          `When I'm not building, you'll find me hunting for vintage clothes, exploring coffee shops with friends, or drawing. I'm always open to collaborating on projects that push innovative boundaries and challenge conventional thinking.`,
-          `Let's <button type="button" class="notes-connect">connect</button>`,
+          `I'm Kean Harrison, a senior at UVA, studying Computer Science and Business.`,
+          `I'm a builder (of communities and products) whose greater purpose is to continually improve to bring light into the lives of others.`,
+          `I'm currently building bespoke software for local restaurants in Charlottesville. I'm actively seeking full-time opportunities in product and forward deployment where I can leverage my client-facing and technical experience.`,
+          `Let's connect!\n\n<a href="https://drive.google.com/file/d/1BlEagKubbpzXUNEgaXmI-65F-ql6arxb/view?usp=sharing" target="_blank" rel="noopener">Resume</a>\n<a href="mailto:kean.thurman.harrison@gmail.com">kean.thurman.harrison@gmail.com</a>\n<a href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener">LinkedIn</a>`,
         ],
         createdAt: new Date('2026-09-05T21:51:00'),
-      },
-      {
-        id: 'contact',
-        title: 'Contact',
-        content: [
-          `<a href="assets/kean_resume.pdf" target="_blank" rel="noopener">Resume</a>`,
-          `<a href="mailto:kean.thurman.harrison@gmail.com">Gmail</a>`,
-          `<a href="mailto:tru3us@virginia.edu">UVA Email</a>`,
-          `<a href="https://www.linkedin.com/in/keanh/" target="_blank" rel="noopener">LinkedIn</a>`,
-          `<a href="tel:7038506946">(703) 850-6946</a>`,
-        ],
-        createdAt: new Date('2026-09-05T21:52:00'),
       },
     ];
 
@@ -1505,13 +1534,6 @@
               e.preventDefault();
               allItems[idx - 1].focus();
             }
-          });
-        });
-        notesMc.querySelectorAll('.notes-connect').forEach(btn => {
-          btn.addEventListener('click', e => {
-            e.preventDefault();
-            _notesActiveId = 'contact';
-            renderNotes();
           });
         });
       }
@@ -1780,11 +1802,11 @@
 
     // Track metadata (do not modify — sourced from Spotify oEmbed)
     const TRACK = {
-      title:  'Midas',
-      artist: 'Maribou State, Holly Walker',
-      art:    'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e023beca4a9acadd343338a8356',
-      uri:    'spotify:track:6VNooTY5w9A9wg1YUsEbKB',
-      url:    'https://open.spotify.com/track/6VNooTY5w9A9wg1YUsEbKB',
+      title:  'A Fire Inside Of Me',
+      artist: 'Lucas Dekker',
+      art:    'https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02eaa0c85efe336c94d86bf532',
+      uri:    'spotify:track:3N5JcXOMWU0J1lZcJrAVms',
+      url:    'https://open.spotify.com/track/3N5JcXOMWU0J1lZcJrAVms',
     };
 
     // Shared state — accessed by both initNowPlaying() and onSpotifyIframeApiReady
@@ -1798,19 +1820,12 @@
 
     function _npSetPlayUI(isPlaying) {
       _npPlaying = isPlaying;
-      const playBtn = document.getElementById('np-play');
-      const widget  = document.getElementById('now-playing');
-      if (!playBtn) return;
-      playBtn.innerHTML = isPlaying ? _NP_ICONS.pause : _NP_ICONS.play;
-      playBtn.setAttribute('aria-label', isPlaying ? 'Pause soundtrack' : 'Play soundtrack');
+      const widget = document.getElementById('now-playing');
       if (widget) widget.classList.toggle('is-playing', isPlaying);
     }
 
     (function initNowPlaying() {
       const widget   = document.getElementById('now-playing');
-      const playBtn  = document.getElementById('np-play');
-
-      _npSetPlayUI(false);
 
       // Drag like desktop folders: threshold so clicks don't jump the widget
       let active = false;
@@ -1862,12 +1877,6 @@
         document.addEventListener('mouseup', onUp);
       });
 
-      // Play / Pause — primary transport control
-      playBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        if (!_embedController) return;
-        _embedController.togglePlay();
-      });
     })();
 
     // Called once by the Spotify iFrame API script after it loads
@@ -1877,22 +1886,185 @@
 
       IFrameAPI.createController(
         element,
-        { uri: TRACK.uri, width: '1', height: '1' },
+        { uri: TRACK.uri, width: '352', height: '352' },
         function(controller) {
           _embedController = controller;
 
-          // Keep widget in sync whenever Spotify reports a playback change
+          // Keep the widget's glow in sync with Spotify's own play/pause button
           controller.addListener('playback_update', function(e) {
             _npSetPlayUI(!e.data.isPaused);
-          });
-
-          // Attempt autoplay once the embed signals readiness.
-          // Both Safari and Chrome may block this — failure is silent.
-          controller.addListener('ready', function() {
-            try { controller.play(); } catch (_) { /* autoplay blocked */ }
           });
         }
       );
     };
+
+    // ══════════════════════════════════════════
+    // Photo viewer — click through slides (placeholders until real photos are added)
+    // Each slide: `src` image path, `date` (shown in the top bar), `description` (shown in the (i) pop-up).
+    // ══════════════════════════════════════════
+    const SLIDES = [
+      { src: 'assets/photos/profile/skydive.jpg', date: '', description: 'skydiving after finishing 3rd year at UVA' },
+      { src: 'assets/photos/profile/latte.jpg', date: 'November 3, 2026 at 1:52:01 PM', description: 'great find while coffee hopping' },
+      { src: 'assets/photos/profile/colonnade.jpg', date: '', description: "pondering at UVA's colosseum" },
+      { src: 'assets/photos/profile/film-smile.jpg', date: '', description: 'italian din' },
+      { src: 'assets/photos/profile/sunrise-hike.jpg', date: 'October 5, 2026 at 7:02:33 AM', description: '2am start; 8 hour summit hike' },
+      { src: 'assets/photos/profile/jet-ski.jpg', date: '', description: 'near death experience' },
+      { src: 'assets/photos/profile/dinner.jpg', date: 'October 28, 2026 at 9:36:44 PM', description: 'i love the UVA builders' },
+      { src: 'assets/photos/profile/la-street.jpg', date: '', description: 'thrifting!' },
+      { src: 'assets/photos/profile/donuts.jpg', date: 'November 5, 2026 at 11:21:30 AM', description: 'more coffee shop hunting' },
+    ];
+
+    (function initPhotoViewer() {
+      const btn = document.getElementById('btn-photos-viewer');
+      let win = null;
+
+      btn.addEventListener('click', () => {
+        if (win) {
+          if (win._minimized) win.restore(); else win.style.zIndex = ++_zTop;
+          return;
+        }
+        btn.classList.add('is-running');
+        win = MacWindow({ title: 'Photos', width: 860, noPadding: true });
+        const mc = win.querySelector('.mac-content');
+        mc.style.height = '540px';
+
+        let idx = 0, zoom = 1;
+        const liked = new Set();
+        const svg = d => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+
+        mc.innerHTML = `
+          <div class="pv">
+            <div class="pv-bar">
+              <div class="pv-left">
+                <button class="pv-circle" id="pv-back" aria-label="Close Photos">${svg('<path d="M15 5l-7 7 7 7"/>')}</button>
+                <div class="pv-zoom"><span aria-hidden="true">&minus;</span><input id="pv-zoom" type="range" min="100" max="300" value="100" aria-label="Zoom" /><span aria-hidden="true">+</span></div>
+              </div>
+              <div class="pv-title"><b id="pv-date"></b><span id="pv-count"></span></div>
+              <div class="pv-right">
+                <button class="pv-circle" id="pv-info-btn" aria-label="Photo info" aria-expanded="false">${svg('<circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r="0.6" fill="currentColor"/>')}</button>
+                <button class="pv-circle" id="pv-heart" aria-label="Favorite" aria-pressed="false">${svg('<path d="M12 20.5s-8-4.9-8-11A4.5 4.5 0 0112 7a4.5 4.5 0 018 2.5c0 6.1-8 11-8 11z"/>')}</button>
+              </div>
+            </div>
+            <div class="pv-stage">
+              <div class="pv-buffer"><button class="pv-arrow" id="pv-prev" aria-label="Previous photo">${svg('<path d="M15 5l-7 7 7 7"/>')}</button></div>
+              <div class="pv-photo-wrap"><div class="pv-photo" id="pv-photo"></div></div>
+              <div class="pv-buffer"><button class="pv-arrow" id="pv-next" aria-label="Next photo">${svg('<path d="M9 5l7 7-7 7"/>')}</button></div>
+            </div>
+            <div class="pv-info" id="pv-info" hidden role="dialog" aria-label="Photo description"><b>About this photo</b><p id="pv-desc"></p></div>
+          </div>`;
+
+        const $ = id => mc.querySelector('#' + id);
+        const photo = $('pv-photo'), info = $('pv-info'), infoBtn = $('pv-info-btn'), heart = $('pv-heart');
+
+        function updateHeart() {
+          const on = liked.has(idx);
+          heart.classList.toggle('is-on', on); heart.setAttribute('aria-pressed', on);
+          heart.querySelector('path').setAttribute('fill', on ? 'currentColor' : 'none');
+        }
+        function render() {
+          const sl = SLIDES[idx];
+          $('pv-date').textContent = sl.date || `Photo ${idx + 1}`;
+          $('pv-count').textContent = `${idx + 1} of ${SLIDES.length}`;
+          $('pv-desc').textContent = sl.description || 'Description coming soon.';
+          if (sl.src) { photo.innerHTML = `<img src="${sl.src}" alt="${sl.description || 'Photo ' + (idx + 1)}" style="max-width:100%;max-height:100%;object-fit:contain;display:block">`; }
+          else { photo.textContent = `Photo ${idx + 1}`; }
+          zoom = 1; $('pv-zoom').value = 100; photo.style.transform = '';
+          updateHeart();
+          $('pv-prev').disabled = idx === 0;
+          $('pv-next').disabled = idx === SLIDES.length - 1;
+        }
+        const go = d => { const n = idx + d; if (n >= 0 && n < SLIDES.length) { idx = n; render(); } };
+        const setInfo = open => { info.hidden = !open; infoBtn.setAttribute('aria-expanded', open); };
+
+        $('pv-prev').addEventListener('click', () => go(-1));
+        $('pv-next').addEventListener('click', () => go(1));
+        $('pv-back').addEventListener('click', () => win.querySelector('.mac-btn-red').click());
+        $('pv-zoom').addEventListener('input', e => { zoom = e.target.value / 100; photo.style.transform = `scale(${zoom})`; });
+        infoBtn.addEventListener('click', e => { e.stopPropagation(); setInfo(info.hidden); });
+        info.addEventListener('click', e => e.stopPropagation());
+        mc.addEventListener('click', () => setInfo(false));
+        heart.addEventListener('click', () => { liked.has(idx) ? liked.delete(idx) : liked.add(idx); updateHeart(); });
+
+        const onKey = e => {
+          if (!win || parseInt(win.style.zIndex || '0') < _zTop) return;
+          if (e.key === 'ArrowLeft') go(-1);
+          else if (e.key === 'ArrowRight') go(1);
+          else if (e.key === 'Escape') setInfo(false);
+        };
+        document.addEventListener('keydown', onKey);
+        win.addEventListener('close-window', () => {
+          document.removeEventListener('keydown', onKey);
+          win = null;
+          btn.classList.remove('is-running');
+        });
+
+        render();
+        winOpen(win, desktop);
+      });
+    })();
+
+    // ══════════════════════════════════════════
+    // Dock — drag icons left/right to reorder (a plain click still opens the app/link)
+    // ══════════════════════════════════════════
+    (function initDockReorder() {
+      const dock = document.querySelector('.dock');
+      dock.querySelectorAll('.dock-icon').forEach(icon => {
+        icon.draggable = false;
+        icon.querySelector('img')?.setAttribute('draggable', 'false');
+
+        icon.addEventListener('mousedown', e => {
+          if (e.button !== 0) return;
+          const startX = e.clientX;
+          let dragging = false, tx = 0;
+          const grab = e.clientX - icon.getBoundingClientRect().left;
+
+          function onMove(ev) {
+            if (!dragging && Math.abs(ev.clientX - startX) < 5) return;
+            if (!dragging) { dragging = true; icon.classList.add('is-dragging'); }
+            const dockRect = dock.getBoundingClientRect();
+            const w = icon.offsetWidth;
+            // Keep the icon inside the dock, then follow the pointer
+            const desiredLeft = Math.max(dockRect.left, Math.min(ev.clientX - grab, dockRect.right - w));
+            const naturalLeft = icon.getBoundingClientRect().left - tx;
+            tx = desiredLeft - naturalLeft;
+            icon.style.transform = `translateX(${tx}px) scale(1.12)`;
+            // Swap places once the dragged icon's center passes a neighbor's center
+            const center = desiredLeft + w / 2;
+            const sibs = [...dock.querySelectorAll('.dock-icon')].filter(x => x !== icon);
+            const target = sibs.filter(x => { const r = x.getBoundingClientRect(); return r.left + r.width / 2 < center; }).length;
+            if ([...dock.children].indexOf(icon) !== target) {
+              const oldLeft = icon.getBoundingClientRect().left;
+              const before = new Map(sibs.map(x => [x, x.getBoundingClientRect().left]));
+              dock.insertBefore(icon, sibs[target] || null);
+              tx += oldLeft - icon.getBoundingClientRect().left; // keep the icon under the pointer
+              // Glide the displaced icons into their new slots instead of snapping
+              sibs.forEach(x => {
+                const dx = before.get(x) - x.getBoundingClientRect().left;
+                if (dx) x.animate([{ transform: `translateX(${dx}px)` }, { transform: 'translateX(0)' }],
+                                  { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+              });
+              icon.style.transform = `translateX(${tx}px) scale(1.12)`;
+            }
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            if (!dragging) return;
+            icon.classList.remove('is-dragging');
+            icon.style.transform = '';
+            // Ease the dropped icon from where it was released into its slot
+            if (tx) icon.animate([{ transform: `translateX(${tx}px) scale(1.12)` }, { transform: 'translateX(0) scale(1)' }],
+                                 { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+            // Swallow the click that follows a drag so the app/link doesn't open
+            const swallow = ev => { ev.preventDefault(); ev.stopImmediatePropagation(); };
+            icon.addEventListener('click', swallow, { capture: true, once: true });
+            setTimeout(() => icon.removeEventListener('click', swallow, { capture: true }), 50);
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      });
+    })();
+
   </script>
 </html>
