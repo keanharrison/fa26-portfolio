@@ -93,28 +93,6 @@
 
     /* ── Dock ── */
 
-    /* ── Mise window (brand kit) ── */
-    .mise {
-      --line: #e6f23a; --on-accent: #050505; --ink: #111111; --paper: #ffffff;
-      --muted: #757575; --edge: #e7e7e7;
-      --sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    }
-    .mise-body { padding: 28px 28px 24px; font-family: var(--sans); color: var(--ink); letter-spacing: -0.011em; -webkit-font-smoothing: antialiased; background: var(--paper); }
-    .mise-wordmark { display: inline-flex; align-items: center; gap: .18em; font-size: 30px; font-weight: 500; letter-spacing: -0.045em; line-height: 1; }
-    .mise-wordmark svg { width: .95em; height: .95em; flex: none; }
-    .mise h2 { margin: 22px 0 0; font-size: 26px; font-weight: 400; line-height: 1.1; letter-spacing: 0; }
-    .mise-lead { margin: 10px 0 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
-    .mise-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-    .mise-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 16px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 14px; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer; }
-    .mise-btn-primary { background: var(--line); color: var(--on-accent); font-weight: 500; }
-    .mise-btn-quiet { border-color: var(--edge); background: transparent; color: var(--ink); }
-    .mise-btn-primary:hover, .mise-btn-quiet:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
-    .mise-btn-quiet:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
-    .mise a:focus-visible, .mise button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-    .mise-people { margin: 24px 0 0; padding-top: 18px; border-top: 1px solid var(--edge); font-size: 15px; }
-    .mise-people ul { margin: 0; padding-left: 20px; line-height: 1.7; color: var(--ink); }
-    .mise-people a { color: var(--ink); font-size: 14px; text-decoration: underline; text-decoration-color: var(--edge); text-underline-offset: 3px; }
-
     .dock {
       position: absolute;
       bottom: 6%;
@@ -212,7 +190,7 @@
       transition: opacity 0.2s ease;
       pointer-events: none;
     }
-    .dock-icon.is-running::after { opacity: 1; }
+    .dock-icon::after, .dock-icon.is-running::after { display: none !important; } /* no running-app dots */
 
     /* ══════════════════════════════════════════
        MacWindow component
@@ -925,7 +903,7 @@
         <img src="assets/icons/notes.png" alt="" aria-hidden="true" />
       </button>
       <button class="dock-icon" id="btn-mise" title="Mise" aria-label="Open Mise">
-        <img src="assets/logos/mise.png" alt="" aria-hidden="true" style="width:86%;height:86%;margin:auto;border-radius:22%" />
+        <img src="assets/logos/mise.png" alt="" aria-hidden="true" style="width:81.25%;height:81.25%;margin:auto;border-radius:22%" />
       </button>
       <button class="dock-icon" id="btn-photos-viewer" title="Photos" aria-label="Open Photos">
         <img src="assets/icons/photos-app.png" alt="" aria-hidden="true" />
@@ -1117,6 +1095,27 @@
     // Experience window content
     // ══════════════════════════════════════════
     const EXPERIENCE_CONTENT = {
+      'mise': {
+        company: 'Co-Founder & AI Solutions Engineer',
+        role: 'Mise',
+        period: 'September 2026 – Present',
+        logo: 'assets/logos/mise.png',
+        linksTop: true,
+        links: [
+          { label: 'Website', href: 'https://mise-iq.com' },
+          { label: 'LinkedIn', href: 'https://www.linkedin.com/company/mise-company/' },
+          { label: 'hello@mise-iq.com', href: 'mailto:hello@mise-iq.com' },
+        ],
+        description: 'Mise is a service-based company that builds pragmatically bespoke software to improve business outcomes for small-to-medium-sized businesses.',
+        skills: ['AI Enablement Training', 'Website Design', 'Custom Internal Tools'],
+        get extra() {
+          return `<div style="border-top:1px solid rgba(0,0,0,0.08);margin-top:16px;padding-top:14px;">
+            <div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Co-Founders</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;"><span style="font-size:13.5px;color:#333;"><span style="font-weight:600;color:#1a1a1a;">Kean Harrison</span>, 4th year at UVA</span>${linkHTML({ label: 'LinkedIn', href: 'https://www.linkedin.com/in/keanh/' })}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;"><span style="font-size:13.5px;color:#333;"><span style="font-weight:600;color:#1a1a1a;">Diego Bartra</span>, 3rd year at UVA</span>${linkHTML({ label: 'LinkedIn', href: 'https://www.linkedin.com/in/diegorbartra/' })}</div>
+          </div>`;
+        },
+      },
       'bundlr': {
         company: 'Shopify APM take-home',
         role: 'Bundlr',
@@ -1124,6 +1123,7 @@
         logo: 'assets/bundlr-logo.svg',
         description: "Bundlr is a shopping agent I built for Shopify's APM interview process. It uses Shopify's Catalog API and the Universal Commerce Protocol to help first-time bundle buyers shop with less stress and more confidence. The persona is an incoming college freshman who needs a lot of unfamiliar things for their dorm and doesn't know where to start. They describe what they need in their own words, Bundlr finds options with ratings, store standing and ship dates, and they review one order across stores before approving it. The prototype runs on sample data.",
         link: { label: 'shopify-apm-take-home.vercel.app', href: 'https://shopify-apm-take-home.vercel.app' },
+        skills: ['Prototyping', 'Requirements Gathering', 'Product Management', 'AI Agents', 'API Integration', 'User Research', 'UX Design'],
       },
       'booz-allen': {
         description: "Built LUMA, a decision-support platform for DoD clients, designing the React/TypeScript frontend and integrating MCP/API workflows across 1,000+ synthetic data points. Turned stakeholder discovery into PRDs and wireframes, and presented LUMA to Booz Allen's C-suite.",
@@ -1252,6 +1252,16 @@
       },
     };
 
+    // External link: blue text + diagonal arrow. A real <a href>, so right-click → Copy Link works.
+    function linkHTML(l) {
+      return `<a href="${l.href}" target="_blank" rel="noopener" style="
+        font-size:12px;font-weight:500;color:#0071e3;text-decoration:none;
+        display:inline-flex;align-items:center;gap:5px;">${l.label}
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 8L8 2M8 2H4M8 2V6" stroke="#0071e3" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg></a>`;
+    }
+
     function buildWindowContent(id, exp) {
       // Category folder: stack each experience, separated by a gray line (the window scrolls)
       if (exp && exp.items) {
@@ -1300,27 +1310,17 @@
             <div style="font-size:11px;color:#6e6e73;margin-top:2px;letter-spacing:0.01em;">${period}</div>
           </div>
         </div>
+        ${links.length && d.linksTop ? `<div style="display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:16px;">${links.map(linkHTML).join('')}</div>` : ''}
         ${d.description ? `<p style="font-size:13.5px;line-height:1.65;color:#333;margin:0 0 16px;">${d.description}</p>` : ''}
         ${skills ? `
         <div style="margin-bottom:${links.length ? '16px' : '0'};">
           <div style="display:flex;flex-wrap:wrap;gap:6px;">${skills}</div>
         </div>` : ''}
-        ${links.length ? `
+        ${links.length && !d.linksTop ? `
         <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;">
-          ${links.map(l => `<a href="${l.href}" target="_blank" rel="noopener" style="
-            font-size:12px;
-            font-weight:500;
-            color:#0071e3;
-            text-decoration:none;
-            display:inline-flex;
-            align-items:center;
-            gap:5px;
-          ">${l.label}
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 8L8 2M8 2H4M8 2V6" stroke="#0071e3" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>`).join('')}
+          ${links.map(linkHTML).join('')}
         </div>` : ''}
+        ${d.extra || ''}
         <style>
           .mac-content ul li { font-size: 13.5px; line-height: 1.65; color: #333; }
         </style>
@@ -1598,29 +1598,6 @@
     btnNotes.addEventListener('click', () => openNotes());
 
     // ── Mise app (dock) ──
-    const MISE_HTML = `
-      <div class="mise">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-          <img src="assets/logos/mise.png" alt="Mise" style="width:56px;height:56px;border-radius:11px;display:block;" />
-          <span class="mise-wordmark" aria-label="Mise" style="font-size:20px;">
-            <span>Mise</span>
-            <svg viewBox="0 0 72 72" fill="currentColor" aria-hidden="true" focusable="false"><path d="m8 55 18-38h12L20 55Z"/><path d="m27 55 18-38h12L39 55Z"/><path d="m46 55 13-28h12L58 55Z"/></svg>
-          </span>
-        </div>
-        <p class="mise-lead" style="margin-top:0">Mise is a service-based company that builds pragmatically bespoke software to improve business outcomes for small-to-medium-sized businesses.</p>
-        <div class="mise-actions">
-          <a class="mise-btn mise-btn-primary" href="https://mise-iq.com" target="_blank" rel="noopener">Visit the website</a>
-          <a class="mise-btn mise-btn-quiet" href="https://www.linkedin.com/company/mise-company/" target="_blank" rel="noopener">LinkedIn</a>
-        </div>
-        <div class="mise-people">
-          <p style="margin:0 0 8px;font-size:15px;font-weight:500;">Co-Founders:</p>
-          <ul>
-            <li>Kean Harrison, 4th year at UVA</li>
-            <li>Diego Bartra, 3rd year at UVA</li>
-          </ul>
-          <p style="margin:16px 0 0;font-size:15px;"><span style="font-weight:500;">Get in contact:</span> <a href="https://mise-iq.com" target="_blank" rel="noopener">mise-iq.com</a></p>
-        </div>
-      </div>`;
     document.getElementById('btn-mise').addEventListener('click', () => {
       const id = 'mise';
       if (openWindows[id]) {
@@ -1628,7 +1605,7 @@
         else openWindows[id].style.zIndex = ++_zTop;
         return;
       }
-      const win = MacWindow({ title: 'Mise', children: MISE_HTML, width: 460 });
+      const win = MacWindow({ title: 'Mise', children: buildWindowContent('mise', { name: 'Mise', folderIcon: '' }) });
       win.querySelector('.mac-content').style.height = 'auto';
       openWindows[id] = win;
       win.addEventListener('close-window', () => delete openWindows[id]);
@@ -2014,7 +1991,7 @@
         const mc = win.querySelector('.mac-content');
         mc.style.height = '540px';
 
-        let idx = 0, zoom = 1;
+        let idx = 0, zoom = 1, panX = 0, panY = 0;
         const liked = new Set();
         const svg = d => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 
@@ -2047,14 +2024,36 @@
           heart.classList.toggle('is-on', on); heart.setAttribute('aria-pressed', on);
           heart.querySelector('path').setAttribute('fill', on ? 'currentColor' : 'none');
         }
+        // Zoom + pan: pan is clamped so the photo can't be dragged out of the frame.
+        const wrap = photo.parentElement;
+        function applyTransform() {
+          const mx = (zoom - 1) * wrap.clientWidth / 2, my = (zoom - 1) * wrap.clientHeight / 2;
+          panX = Math.max(-mx, Math.min(mx, panX)); panY = Math.max(-my, Math.min(my, panY));
+          photo.style.transform = zoom > 1 ? `translate(${panX}px, ${panY}px) scale(${zoom})` : '';
+          wrap.style.cursor = zoom > 1 ? 'grab' : '';
+        }
+        let drag = null;
+        wrap.addEventListener('pointerdown', e => {
+          if (zoom <= 1 || e.button !== 0) return;
+          drag = { x: e.clientX, y: e.clientY, px: panX, py: panY };
+          wrap.setPointerCapture(e.pointerId); wrap.style.cursor = 'grabbing'; photo.style.transition = 'none';
+          e.preventDefault();
+        });
+        wrap.addEventListener('pointermove', e => {
+          if (!drag) return;
+          panX = drag.px + e.clientX - drag.x; panY = drag.py + e.clientY - drag.y; applyTransform();
+        });
+        const endDrag = () => { if (!drag) return; drag = null; photo.style.transition = ''; applyTransform(); };
+        wrap.addEventListener('pointerup', endDrag); wrap.addEventListener('pointercancel', endDrag);
+        wrap.addEventListener('dragstart', e => e.preventDefault());
         function render() {
           const sl = SLIDES[idx];
           $('pv-date').textContent = sl.date || `Photo ${idx + 1}`;
           $('pv-count').textContent = `${idx + 1} of ${SLIDES.length}`;
           $('pv-desc').textContent = sl.description || 'Description coming soon.';
-          if (sl.src) { photo.innerHTML = `<img src="${sl.src}" alt="${sl.description || 'Photo ' + (idx + 1)}" style="max-width:100%;max-height:100%;object-fit:contain;display:block">`; }
+          if (sl.src) { photo.innerHTML = `<img src="${sl.src}" alt="${sl.description || 'Photo ' + (idx + 1)}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none" draggable="false">`; }
           else { photo.textContent = `Photo ${idx + 1}`; }
-          zoom = 1; $('pv-zoom').value = 100; photo.style.transform = '';
+          zoom = 1; panX = panY = 0; $('pv-zoom').value = 100; applyTransform();
           updateHeart();
           $('pv-prev').disabled = idx === 0;
           $('pv-next').disabled = idx === SLIDES.length - 1;
@@ -2065,7 +2064,7 @@
         $('pv-prev').addEventListener('click', () => go(-1));
         $('pv-next').addEventListener('click', () => go(1));
         $('pv-back').addEventListener('click', () => win.querySelector('.mac-btn-red').click());
-        $('pv-zoom').addEventListener('input', e => { zoom = e.target.value / 100; photo.style.transform = `scale(${zoom})`; });
+        $('pv-zoom').addEventListener('input', e => { zoom = e.target.value / 100; applyTransform(); });
         infoBtn.addEventListener('click', e => { e.stopPropagation(); setInfo(info.hidden); });
         info.addEventListener('click', e => e.stopPropagation());
         mc.addEventListener('click', () => setInfo(false));
