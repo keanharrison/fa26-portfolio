@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kean Harrison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;450;500&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <meta name="description" content="Kean Harrison — UVA student and product engineer building software through user discovery, technical execution, and product strategy." />
@@ -89,6 +92,29 @@
     }
 
     /* ── Dock ── */
+
+    /* ── Mise window (brand kit) ── */
+    .mise {
+      --line: #e6f23a; --on-accent: #050505; --ink: #111111; --paper: #ffffff;
+      --muted: #757575; --edge: #e7e7e7;
+      --sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    .mise-body { padding: 28px 28px 24px; font-family: var(--sans); color: var(--ink); letter-spacing: -0.011em; -webkit-font-smoothing: antialiased; background: var(--paper); }
+    .mise-wordmark { display: inline-flex; align-items: center; gap: .18em; font-size: 30px; font-weight: 500; letter-spacing: -0.045em; line-height: 1; }
+    .mise-wordmark svg { width: .95em; height: .95em; flex: none; }
+    .mise h2 { margin: 22px 0 0; font-size: 26px; font-weight: 400; line-height: 1.1; letter-spacing: 0; }
+    .mise-lead { margin: 10px 0 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+    .mise-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .mise-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 16px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 14px; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer; }
+    .mise-btn-primary { background: var(--line); color: var(--on-accent); font-weight: 500; }
+    .mise-btn-quiet { border-color: var(--edge); background: transparent; color: var(--ink); }
+    .mise-btn-primary:hover, .mise-btn-quiet:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+    .mise-btn-quiet:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+    .mise a:focus-visible, .mise button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .mise-people { margin: 24px 0 0; padding-top: 18px; border-top: 1px solid var(--edge); font-size: 15px; }
+    .mise-people ul { margin: 0; padding-left: 20px; line-height: 1.7; color: var(--ink); }
+    .mise-people a { color: var(--ink); font-size: 14px; text-decoration: underline; text-decoration-color: var(--edge); text-underline-offset: 3px; }
+
     .dock {
       position: absolute;
       bottom: 6%;
@@ -322,7 +348,7 @@
       flex-direction: column;
       align-items: center;
       gap: 5px;
-      width: 118px;
+      width: 100px;
       cursor: pointer;
       user-select: none;
       transition: transform 0.2s ease, filter 0.2s ease;
@@ -347,14 +373,24 @@
 
     .folder-wrap {
       position: relative;
-      width: 96px;
-      height: 96px;
+      width: 74px;
+      height: 74px;
     }
     .folder-wrap .folder-base {
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
+    }
+
+    .file-page {
+      position: absolute; inset: 7px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .file-page img {
+      width: 100%; height: 100%; object-fit: contain;
+      border-radius: 20px;
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,0.45));
     }
 
     .icon-label {
@@ -724,9 +760,9 @@
     ─────────────────────────────────────────────────────────── */
     .now-playing {
       position: absolute;
-      top: 5%;
-      left: 3.5%;
-      right: auto;
+      top: 3.4%;
+      left: auto;
+      right: 1.7%;
       bottom: auto;
       width: 196px;
       height: auto;
@@ -888,6 +924,9 @@
       <button class="dock-icon" id="btn-notes" title="Notes" aria-label="Open Notes">
         <img src="assets/icons/notes.png" alt="" aria-hidden="true" />
       </button>
+      <button class="dock-icon" id="btn-mise" title="Mise" aria-label="Open Mise">
+        <img src="assets/logos/mise.png" alt="" aria-hidden="true" style="width:86%;height:86%;margin:auto;border-radius:22%" />
+      </button>
       <button class="dock-icon" id="btn-photos-viewer" title="Photos" aria-label="Open Photos">
         <img src="assets/icons/photos-app.png" alt="" aria-hidden="true" />
       </button>
@@ -919,6 +958,9 @@
 
     // Click outside any open window (but not the dock) → close all windows
     desktop.addEventListener('mousedown', e => {
+      if (!e.target.closest('.desktop-icon')) {
+        document.querySelectorAll('.desktop-icon.selected').forEach(i => i.classList.remove('selected'));
+      }
       if (!e.target.closest('.mac-window') && !e.target.closest('.dock')) {
         // winClose dispatches 'close-window' immediately (clears state vars)
         // and removes the element after the CSS transition.
@@ -1062,28 +1104,29 @@
     // Experience data
     // ══════════════════════════════════════════
     // Each desktop folder is a category; its window lists these experiences newest-first.
+    // Desktop: the Mise file plus two folders (red / blue), each listing its experiences newest-first.
     const EXPERIENCES = [
-      { id: 'entrepreneurship', name: 'Entrepreneurship', folderIcon: 'assets/icons/folder.png', items: ['independent-consultant', 'uva-darden', 'keanfit'] },
-      { id: 'client-facing',    name: 'Client-Facing',    folderIcon: 'assets/icons/folder.png', items: ['tsg', 'anthropic', 'johnson-controls'] },
-      { id: 'product',          name: 'Product',          folderIcon: 'assets/icons/folder.png', items: ['booz-allen', 'stealth-startup', 'beats-by-dre'] },
+      { id: 'work-experience', name: 'Work Experience', folderIcon: 'assets/icons/folder.png',
+        colorFilter: 'hue-rotate(155deg) saturate(1.6) brightness(0.95)',
+        items: ['booz-allen', 'uva-darden', 'anthropic', 'stealth-startup', 'johnson-controls', 'beats-by-dre', 'keanfit'] },
+      { id: 'projects', name: 'Projects', folderIcon: 'assets/icons/folder.png', colorFilter: '',
+        items: ['bundlr', 'tsg'], hideResumeNote: true },
     ];
 
     // ══════════════════════════════════════════
     // Experience window content
     // ══════════════════════════════════════════
     const EXPERIENCE_CONTENT = {
-      'independent-consultant': {
-        company: 'Independent Consultant',
-        role: 'AI Solutions Engineer',
-        period: 'Present · Charlottesville, VA',
-        logo: 'assets/logos/stealth-startup.jpg',
-        bullets: [
-          'Building bespoke software for local restaurants in Charlottesville.',
-          'Scoping and shipping custom AI-powered tools around each restaurant\'s day-to-day operations.',
-        ],
-        skills: ['AI Solutions', 'Client Discovery', 'Custom Software', 'Full-Stack Development', 'Stakeholder Communication'],
+      'bundlr': {
+        company: 'Shopify APM take-home',
+        role: 'Bundlr',
+        period: 'November 2026',
+        logo: 'assets/bundlr-logo.svg',
+        description: "Bundlr is a shopping agent I built for Shopify's APM interview process. It uses Shopify's Catalog API and the Universal Commerce Protocol to help first-time bundle buyers shop with less stress and more confidence. The persona is an incoming college freshman who needs a lot of unfamiliar things for their dorm and doesn't know where to start. They describe what they need in their own words, Bundlr finds options with ratings, store standing and ship dates, and they review one order across stores before approving it. The prototype runs on sample data.",
+        link: { label: 'shopify-apm-take-home.vercel.app', href: 'https://shopify-apm-take-home.vercel.app' },
       },
       'booz-allen': {
+        description: "Built LUMA, a decision-support platform for DoD clients, designing the React/TypeScript frontend and integrating MCP/API workflows across 1,000+ synthetic data points. Turned stakeholder discovery into PRDs and wireframes, and presented LUMA to Booz Allen's C-suite.",
         company: 'Booz Allen Hamilton',
         role: 'Product Engineer Intern',
         period: 'Jun – Aug 2026 · 3 months',
@@ -1097,6 +1140,7 @@
         skills: ['React', 'TypeScript', 'MCP', 'Figma', 'Product Management', 'User Research'],
       },
       'uva-darden': {
+        description: 'Co-founded Vantage, an AI fintech startup selected for Darden iLab, then Speak, whose mobile-first MVP I engineered in Next.js. Ran 30 discovery interviews and presented to investors at Demo Night.',
         company: 'UVA Darden School of Business',
         role: 'Co-Founder & CTO',
         period: 'Nov 2025 – Jun 2026 · 8 months',
@@ -1113,6 +1157,7 @@
         skills: ['Entrepreneurship', 'Python', 'Next.js', 'React', 'TypeScript', 'Product Validation', 'Technical Architecture'],
       },
       'anthropic': {
+        description: 'Selected to represent Anthropic at UVA, driving 300+ Claude signups through demos and outreach. Organized the Claude for Good Hackathon, where 175+ attendees across 45 teams built AI tools for UVA.',
         company: 'Anthropic',
         role: 'Product Ambassador',
         period: 'Aug – Dec 2025 · 5 months',
@@ -1130,6 +1175,7 @@
         skills: ['Product Demos', 'Community Growth', 'Event Leadership', 'AI', 'Public Speaking'],
       },
       'stealth-startup': {
+        description: 'Built a RAG pipeline giving LLMs long-term context retention, improving response relevance 70% and accuracy 58%. Evaluated retrieval strategies and latency tradeoffs for founder decision-support workflows.',
         company: 'Stealth Startup',
         role: 'Technical Product Manager Intern',
         period: 'Jul – Sep 2025 · 3 months',
@@ -1143,6 +1189,7 @@
         skills: ['RAG', 'LLMs', 'Vector Retrieval', 'Product Management', 'AI Systems'],
       },
       'johnson-controls': {
+        description: 'Analyzed 4,000 customer data points to find conversion drop-offs and generated $7K+ in sales pipeline in the first month. Ranked as the top-performing sales intern.',
         company: 'Johnson Controls International',
         role: 'Sales Engineer Intern',
         period: 'May – Aug 2025 · 4 months',
@@ -1156,6 +1203,7 @@
         skills: ['Sales Engineering', 'Data Analysis', 'Customer Insights', 'Pipeline Analysis', 'Excel'],
       },
       'beats-by-dre': {
+        description: "Analyzed 4,945 reviews across 54 competitor products to surface Gen Z feature gaps. Developed an all-in-one speaker concept and delivered a PRD to Beats' Lead Product Managers.",
         company: 'Beats by Dre',
         role: 'Product Analyst',
         period: 'Mar – May 2025 · 3 months',
@@ -1169,6 +1217,7 @@
         skills: ['Product Analytics', 'Competitive Research', 'Consumer Insights', 'PRDs', 'Product Strategy'],
       },
       'keanfit': {
+        description: 'Founded KeanFit to close an affordability gap in personal training, building the market analysis, website, and acquisition strategy. Acquired all 9 Q1 clients and improved tracked outcomes 27%.',
         company: 'KeanFit LLC',
         role: 'Founder',
         period: 'Aug 2023 – Mar 2025 · 1 yr 8 mo',
@@ -1185,6 +1234,7 @@
         skills: ['Entrepreneurship', 'Market Analysis', 'Client Acquisition', 'Sales', 'Fitness Programming'],
       },
       'tsg': {
+        description: 'Led a 5-person team over an 80-day engagement evaluating OpenAI, Gemini, and Grok for public-sector Oracle deployment. Designed a 24-task benchmark and delivered go/no-go LLM procurement recommendations.',
         company: 'Technē Strategy Group',
         role: 'Tech Lead',
         period: 'Jan – May 2026 · 5 months',
@@ -1207,7 +1257,7 @@
       if (exp && exp.items) {
         const divider = '<div style="border-top:1px solid rgba(0,0,0,0.12);margin:28px 0;"></div>';
         const resumeNote = '<p style="font-size:13px;color:#444;margin:0 0 24px;">Check out my <a href="https://drive.google.com/file/d/1BlEagKubbpzXUNEgaXmI-65F-ql6arxb/view?usp=sharing" target="_blank" rel="noopener" style="color:#0071e3;text-decoration:none;font-weight:500;">resume</a> for more</p>';
-        return resumeNote + exp.items.map(itemId => buildWindowContent(itemId, { name: '', folderIcon: exp.folderIcon })).join(divider);
+        return (exp.hideResumeNote ? '' : resumeNote) + exp.items.map(itemId => buildWindowContent(itemId, { name: '', folderIcon: exp.folderIcon })).join(divider);
       }
       const d = EXPERIENCE_CONTENT[id] || {};
       const company = d.company || exp.name;
@@ -1241,6 +1291,7 @@
               object-fit:contain;
               display:block;
               border-radius:${isLogo ? '11px' : '0'};
+              ${logoSrc.endsWith('.svg') ? 'width:56px;height:56px;' : ''}
             " />
           </div>
           <div>
@@ -1249,12 +1300,13 @@
             <div style="font-size:11px;color:#6e6e73;margin-top:2px;letter-spacing:0.01em;">${period}</div>
           </div>
         </div>
+        ${d.description ? `<p style="font-size:13.5px;line-height:1.65;color:#333;margin:0 0 16px;">${d.description}</p>` : ''}
         ${skills ? `
         <div style="margin-bottom:${links.length ? '16px' : '0'};">
           <div style="display:flex;flex-wrap:wrap;gap:6px;">${skills}</div>
         </div>` : ''}
         ${links.length ? `
-        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:14px;display:flex;flex-direction:column;gap:8px;">
+        <div style="border-top:1px solid rgba(0,0,0,0.08);padding-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;">
           ${links.map(l => `<a href="${l.href}" target="_blank" rel="noopener" style="
             font-size:12px;
             font-weight:500;
@@ -1289,7 +1341,10 @@
       if (top)   el.style.top   = top;
       el.setAttribute('aria-label', name);
       const imgStyle = colorFilter ? ` style="filter:${colorFilter}"` : '';
-      el.innerHTML = `
+      el.innerHTML = exp.file ? `
+        <div class="folder-wrap"><div class="file-page"><img src="${folderIcon}" alt="" aria-hidden="true" /></div></div>
+        <span class="icon-label" aria-hidden="true">${name}</span>
+      ` : `
         <div class="folder-wrap">
           <img class="folder-base" src="${folderIcon}" alt="" aria-hidden="true"${imgStyle} />
         </div>
@@ -1373,7 +1428,7 @@
               openWindows[id].style.zIndex = ++_zTop;
             }
           } else {
-            const win = MacWindow({ title: name, children: buildWindowContent(id, exp) });
+            const win = MacWindow({ title: exp.title || name, children: buildWindowContent(id, exp) });
             openWindows[id] = win;
             win.addEventListener('close-window', () => delete openWindows[id]);
             winOpen(win, desktop);
@@ -1398,7 +1453,7 @@
             openWindows[id].style.zIndex = ++_zTop;
           }
         } else {
-          const win = MacWindow({ title: name, children: buildWindowContent(id, exp) });
+          const win = MacWindow({ title: exp.title || name, children: buildWindowContent(id, exp) });
           openWindows[id] = win;
           win.addEventListener('close-window', () => delete openWindows[id]);
           winOpen(win, desktop);
@@ -1410,31 +1465,23 @@
 
     EXPERIENCES.forEach(exp => desktop.insertBefore(DesktopItem(exp), desktop.querySelector('.dock')));
 
-    // Three folders down the right side: evenly spaced vertically (fixed step, starting near the top),
-    // with a loose horizontal stagger. Tweak STAGGER (px gap from the right edge) and TOP/STEP to taste.
-    // Refresh restores this; dragging still moves a folder freely.
-    const FOLDER_ORDER = ['entrepreneurship', 'client-facing', 'product'];
+    // Final desktop layout: folders at the left, positioned as % of the desktop (center-x, top)
+    // so they land in the same relative spot on any screen. Refresh restores this; dragging moves one freely.
+    const FOLDER_POS = { 'work-experience': [4.6, 4.7], 'projects': [4.4, 17.9] };
     function layoutDesktopFolders() {
       const dr = desktop.getBoundingClientRect();
-      const icons = FOLDER_ORDER
-        .map(id => desktop.querySelector(`.desktop-icon[data-id="${id}"]`))
-        .filter(Boolean);
-      if (!icons.length) return;
-      const w = icons[0].offsetWidth;
-      const h = icons[0].offsetHeight;
-      const STAGGER = [64, 210, 80];
-      const TOP = 56;
-      const STEP = Math.min(190, (dr.height - TOP - h - 24) / Math.max(1, icons.length - 1));
-
-      icons.forEach((el, i) => {
+      Object.entries(FOLDER_POS).forEach(([id, [cx, top]]) => {
+        const el = desktop.querySelector(`.desktop-icon[data-id="${id}"]`);
+        if (!el) return;
         el.style.right = 'auto';
-        el.style.left  = Math.max(8, Math.round(dr.width - w - STAGGER[i % STAGGER.length])) + 'px';
-        el.style.top   = Math.round(TOP + i * STEP) + 'px';
+        el.style.left  = Math.max(8, Math.round(dr.width * cx / 100 - el.offsetWidth / 2)) + 'px';
+        el.style.top   = Math.round(dr.height * top / 100) + 'px';
       });
     }
     requestAnimationFrame(() => requestAnimationFrame(layoutDesktopFolders));
     // Re-run once images/fonts have loaded and the dock has its real size
     window.addEventListener('load', layoutDesktopFolders);
+    window.addEventListener('resize', layoutDesktopFolders); // also covers a window that was sized late
 
     // ══════════════════════════════════════════
     // Notes app
@@ -1549,6 +1596,45 @@
     }
 
     btnNotes.addEventListener('click', () => openNotes());
+
+    // ── Mise app (dock) ──
+    const MISE_HTML = `
+      <div class="mise">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+          <img src="assets/logos/mise.png" alt="Mise" style="width:56px;height:56px;border-radius:11px;display:block;" />
+          <span class="mise-wordmark" aria-label="Mise" style="font-size:20px;">
+            <span>Mise</span>
+            <svg viewBox="0 0 72 72" fill="currentColor" aria-hidden="true" focusable="false"><path d="m8 55 18-38h12L20 55Z"/><path d="m27 55 18-38h12L39 55Z"/><path d="m46 55 13-28h12L58 55Z"/></svg>
+          </span>
+        </div>
+        <p class="mise-lead" style="margin-top:0">Mise is a service-based company that builds pragmatically bespoke software to improve business outcomes for small-to-medium-sized businesses.</p>
+        <div class="mise-actions">
+          <a class="mise-btn mise-btn-primary" href="https://mise-iq.com" target="_blank" rel="noopener">Visit the website</a>
+          <a class="mise-btn mise-btn-quiet" href="https://www.linkedin.com/company/mise-company/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+        <div class="mise-people">
+          <p style="margin:0 0 8px;font-size:15px;font-weight:500;">Co-Founders:</p>
+          <ul>
+            <li>Kean Harrison, 4th year at UVA</li>
+            <li>Diego Bartra, 3rd year at UVA</li>
+          </ul>
+          <p style="margin:16px 0 0;font-size:15px;"><span style="font-weight:500;">Get in contact:</span> <a href="https://mise-iq.com" target="_blank" rel="noopener">mise-iq.com</a></p>
+        </div>
+      </div>`;
+    document.getElementById('btn-mise').addEventListener('click', () => {
+      const id = 'mise';
+      if (openWindows[id]) {
+        if (openWindows[id]._minimized) openWindows[id].restore();
+        else openWindows[id].style.zIndex = ++_zTop;
+        return;
+      }
+      const win = MacWindow({ title: 'Mise', children: MISE_HTML, width: 460 });
+      win.querySelector('.mac-content').style.height = 'auto';
+      openWindows[id] = win;
+      win.addEventListener('close-window', () => delete openWindows[id]);
+      winOpen(win, desktop);
+    });
+
 
     // ══════════════════════════════════════════
     // Photos app
